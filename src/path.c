@@ -16,14 +16,3 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-
-#ifndef BUILDIN_FUNCS_H
-#define BUILDIN_FUNCS_H
-
-int echo(int argc, char* argv[]);
-int date(int argc, char* argv[]);
-int pwd(int argc, char* argv[]);
-int cd(int argc, char* argv[]);
-int hell(int argc, char* argv[]);
-
-#endif /* BUILDIN_FUNCS_H */

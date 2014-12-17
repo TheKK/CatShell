@@ -31,6 +31,7 @@
 #include <unistd.h>
 
 #include "buildInFuncs.h"
+#include "sysfilesystem.h"
 
 #define _(STRING) gettext(STRING)
 
@@ -88,7 +89,8 @@ l10nInit()
 static void
 printPromote()
 {
-	printf("[CatShell] $ ");
+	printf("[CatShell] %s\n", getenv("USER"));
+	printf("$ ");
 }
 
 static void
@@ -99,6 +101,15 @@ doCmd()
 
 	} else if (strcmp(myArgv_[0], "echo") == 0) {
 		returnValue_ = echo(myArgc_, myArgv_);
+
+	} else if (strcmp(myArgv_[0], "date") == 0) {
+		returnValue_ = date(myArgc_, myArgv_);
+
+	} else if (strcmp(myArgv_[0], "cd") == 0) {
+		returnValue_ = cd(myArgc_, myArgv_);
+
+	} else if (strcmp(myArgv_[0], "pwd") == 0) {
+		returnValue_ = pwd(myArgc_, myArgv_);
 
 	} else if (strcmp(myArgv_[0], "exit") == 0) {
 		shellIsRunning_ = 0;
@@ -151,6 +162,16 @@ int
 main(int argc, char* argv[])
 {
 	l10nInit();
+
+	/*char* basePath = cs_GetBasePath();*/
+	/*if (basePath) {*/
+		/*strcpy(pwd_, basePath);*/
+		/*cs_Free(basePath);*/
+		/*basePath = NULL;*/
+	/*} else {*/
+		/*printf("Can't get base path!\n");*/
+		/*exit(1);*/
+	/*}*/
 
 	getOptions(argc, argv);
 

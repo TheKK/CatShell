@@ -17,7 +17,18 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <string.h>
+#include <time.h>
+
+#include "path.h"
+
 #include "buildInFuncs.h"
+
+/* FIXME Not place here */
+static char workPath[500];
 
 int
 echo(int argc, char* argv[])
@@ -26,6 +37,40 @@ echo(int argc, char* argv[])
 		printf("%s", argv[i]);
 
 	printf("\n");
+
+	return 0;
+}
+
+int
+date(int argc, char* argv[])
+{
+	time_t rawTime;
+
+	rawTime = time(NULL);
+	printf("%s", ctime(&rawTime));
+
+	return 0;
+}
+
+int
+pwd(int argc, char* argv[])
+{
+	printf("%s\n", workPath);
+
+	return 0;
+}
+
+int
+cd(int argc, char* argv[])
+{
+	/* TODO Check if dir exist */
+	if (argc == 1) {
+		memset(workPath, 0, strlen(workPath));
+		strcat(workPath, "/home/");
+		strcat(workPath, getenv("USER"));
+	} else {
+		strcpy(workPath, argv[1]);
+	}
 
 	return 0;
 }
