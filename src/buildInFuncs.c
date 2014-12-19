@@ -27,9 +27,6 @@
 
 #include "buildInFuncs.h"
 
-/* FIXME Not place here */
-static char workPath[500];
-
 int
 echo(int argc, char* argv[])
 {
@@ -55,22 +52,14 @@ date(int argc, char* argv[])
 int
 pwd(int argc, char* argv[])
 {
-	printf("%s\n", workPath);
-
+	printf("%s\n", cs_path_getWorkingPath());
 	return 0;
 }
 
 int
 cd(int argc, char* argv[])
 {
-	/* TODO Check if dir exist */
-	if (argc == 1) {
-		memset(workPath, 0, strlen(workPath));
-		strcat(workPath, "/home/");
-		strcat(workPath, getenv("USER"));
-	} else {
-		strcpy(workPath, argv[1]);
-	}
+	printf("funciont not done, coming soon...\n");
 
 	return 0;
 }

@@ -30,6 +30,7 @@
 #include <time.h>
 #include <unistd.h>
 
+#include "path.h"
 #include "buildInFuncs.h"
 #include "sysfilesystem.h"
 
@@ -76,6 +77,19 @@ getOptions(int argc, char* argv[])
 			break;
 		}
 	}
+}
+
+static void
+init()
+{
+	if (cs_path_init())
+		exit(1);
+}
+
+static void
+quit()
+{
+	cs_path_quit();
 }
 
 static void
@@ -161,17 +175,8 @@ splitCmd()
 int
 main(int argc, char* argv[])
 {
+	init();
 	l10nInit();
-
-	/*char* basePath = cs_GetBasePath();*/
-	/*if (basePath) {*/
-		/*strcpy(pwd_, basePath);*/
-		/*cs_Free(basePath);*/
-		/*basePath = NULL;*/
-	/*} else {*/
-		/*printf("Can't get base path!\n");*/
-		/*exit(1);*/
-	/*}*/
 
 	getOptions(argc, argv);
 
@@ -182,6 +187,8 @@ main(int argc, char* argv[])
 		splitCmd();
 		doCmd();
 	}
+
+	quit();
 
 	return EXIT_SUCCESS;
 }
