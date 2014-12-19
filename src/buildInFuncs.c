@@ -27,6 +27,27 @@
 
 #include "buildInFuncs.h"
 
+#define BUILTIN(cmd) {#cmd, cmd}
+
+/* XXX This might not a good idea */
+extern uint8_t shellIsRunning_;
+
+typedef int(*buildinFuncPtr)(int, char**);
+
+struct buildin {
+	char* name;
+	buildinFuncPtr cmd;
+};
+
+static struct buildin buildins[] = {
+	BUILTIN(echo),
+	BUILTIN(date),
+	BUILTIN(pwd),
+	BUILTIN(cd),
+	BUILTIN(bye),
+	BUILTIN(hell)
+};
+
 int
 echo(int argc, char* argv[])
 {
@@ -65,9 +86,32 @@ cd(int argc, char* argv[])
 }
 
 int
-hell(int argc, char* argv[])
+bye(int argc, char* argv[])
 {
-	printf("welcom to hell!!\n");
+	shellIsRunning_ = 0;
 
 	return 0;
+}
+
+int
+hell(int argc, char* argv[])
+{
+	printf("this is hell!!\n");
+
+	return 0;
+}
+
+int
+doBuildinCmd(int argc, char* argv[])
+{
+	static int  builtinCmdNum = sizeof(buildins) / sizeof(struct buildin);
+
+	for (int i = 0; i < builtinCmdNum; i++) {
+		if (strcmp(argv[0], buildins[i].name) == 0)
+			return buildins[i].cmd(argc, argv);
+	}
+
+	printf("Command not found\n");
+
+	return 2525;
 }

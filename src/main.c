@@ -39,7 +39,7 @@
 #define USER_INPUT_BUFFER_SIZE 200
 #define MY_ARGC_MAX_COUNT 50
 
-static uint8_t shellIsRunning_ = 1;
+uint8_t shellIsRunning_ = 1;
 
 static char cmdBuffer_[USER_INPUT_BUFFER_SIZE];
 
@@ -108,36 +108,6 @@ printPromote()
 }
 
 static void
-doCmd()
-{
-	if (strcmp(myArgv_[0], "hell") == 0) {
-		returnValue_ = hell(myArgc_, myArgv_);
-
-	} else if (strcmp(myArgv_[0], "echo") == 0) {
-		returnValue_ = echo(myArgc_, myArgv_);
-
-	} else if (strcmp(myArgv_[0], "date") == 0) {
-		returnValue_ = date(myArgc_, myArgv_);
-
-	} else if (strcmp(myArgv_[0], "cd") == 0) {
-		returnValue_ = cd(myArgc_, myArgv_);
-
-	} else if (strcmp(myArgv_[0], "pwd") == 0) {
-		returnValue_ = pwd(myArgc_, myArgv_);
-
-	} else if (strcmp(myArgv_[0], "exit") == 0) {
-		shellIsRunning_ = 0;
-
-	} else if (strcmp(myArgv_[0], "\0") == 0) {
-		printf("\n");
-
-	} else {
-		printf("command not found\n");
-		returnValue_ = 2525;
-	}
-}
-
-static void
 resetMyArg()
 {
 	myArgc_ = 1;
@@ -185,7 +155,7 @@ main(int argc, char* argv[])
 		fgets(cmdBuffer_, USER_INPUT_BUFFER_SIZE, stdin);
 
 		splitCmd();
-		doCmd();
+		returnValue_ = doBuildinCmd(myArgc_, myArgv_);
 	}
 
 	quit();
