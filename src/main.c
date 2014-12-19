@@ -31,7 +31,7 @@
 #include <unistd.h>
 
 #include "path.h"
-#include "buildInFuncs.h"
+#include "builtInFuncs.h"
 #include "sysfilesystem.h"
 
 #define _(STRING) gettext(STRING)
@@ -155,7 +155,7 @@ main(int argc, char* argv[])
 		fgets(cmdBuffer_, USER_INPUT_BUFFER_SIZE, stdin);
 
 		splitCmd();
-		returnValue_ = doBuildinCmd(myArgc_, myArgv_);
+		returnValue_ = doBuiltinCmd(myArgc_, myArgv_);
 	}
 
 	quit();

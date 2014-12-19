@@ -17,8 +17,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef BUILDIN_FUNCS_H
-#define BUILDIN_FUNCS_H
+#ifndef BUILTIN_FUNCS_H
+#define BUILTIN_FUNCS_H
 
 int echo(int argc, char* argv[]);
 int date(int argc, char* argv[]);
@@ -27,6 +27,6 @@ int cd(int argc, char* argv[]);
 int bye(int argc, char* argv[]);
 int hell(int argc, char* argv[]);
 
-int doBuildinCmd(int argc, char* argv[]);
+int doBuiltinCmd(int argc, char* argv[]);
 
-#endif /* BUILDIN_FUNCS_H */
+#endif /* BUILTIN_FUNCS_H */
