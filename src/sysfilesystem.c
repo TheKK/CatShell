@@ -34,34 +34,6 @@
 
 #include "sysfilesystem.h"
 
-void
-cs_Free(void* ptr)
-{
-	if (!ptr)
-		return;
-
-	free(ptr);
-}
-
-static void*
-cs_realloc(void* ptr, size_t size)
-{
-	void* retval = NULL;
-
-	retval = malloc(size);	
-	if (!retval)
-		return NULL;
-
-	if (!ptr) {
-		return retval;
-	} else {
-		memcpy(retval, ptr, size);
-		free(ptr);
-	}
-
-	return retval;
-}
-
 char*
 cs_readSymLink(const char* path)
 {
@@ -70,7 +42,7 @@ cs_readSymLink(const char* path)
 	size_t rc = -1;
 
 	while (1) {
-		char* ptr = (char*) cs_realloc(retval, len);
+		char* ptr = (char*) realloc(retval, len);
 		if (!ptr) {
 			printf("Out of memory\n");
 			break;
@@ -95,7 +67,7 @@ cs_readSymLink(const char* path)
 }
 
 char*
-cs_GetBasePath()
+cs_getBasePath()
 {
 	char* retval = NULL;
 
@@ -108,13 +80,13 @@ cs_GetBasePath()
 		if (ptr) {
 			*(ptr + 1) = '\0';
 		} else {
-			cs_Free(retval);
+			free(retval);
 			return NULL;
 		}
 	}
 
 	if (retval) {
-		char* ptr = cs_realloc(retval, strlen(retval) + 1);
+		char* ptr = realloc(retval, strlen(retval) + 1);
 		if (ptr)
 			retval = ptr;
 	}
