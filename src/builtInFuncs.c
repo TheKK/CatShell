@@ -52,7 +52,7 @@ int
 echo(int argc, char* argv[])
 {
 	for (uint16_t i = 1; i < argc; i++)
-		printf("%s", argv[i]);
+		printf("%s ", argv[i]);
 
 	printf("\n");
 
