@@ -16,3 +16,51 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "path.h"
+
+#include "sysfilesystem.h"
+
+static char* workingPath_ = NULL;
+
+int
+cs_path_init()
+{
+	const char* currentPath = NULL;
+	char* ptr = NULL;
+
+	currentPath = getenv("PWD");
+	if (currentPath) {
+		size_t len;
+
+		len = strlen(currentPath) + 1;
+		ptr = (char*) malloc(sizeof(char) * len);
+		strcat(ptr, currentPath);
+	} else {
+		ptr = (char*) malloc(sizeof(char) * 2);
+		strcpy(ptr, "/");
+	}
+
+	workingPath_ = ptr;
+
+	return 0;
+}
+
+void
+cs_path_quit()
+{
+	if (workingPath_) {
+		free(workingPath_);
+		workingPath_ = NULL;
+	}
+}
+
+const char*
+cs_path_getWorkingPath()
+{
+	return workingPath_;
+}

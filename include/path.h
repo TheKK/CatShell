@@ -16,3 +16,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
+
+#ifndef PATH_H
+#define PATH_H
+
+int cs_path_init();
+void cs_path_quit();
+const char* cs_path_getWorkingPath();
+
+#endif /* PATH_H */
