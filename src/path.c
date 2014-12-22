@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <dirent.h>
 
 #include "path.h"
 
@@ -63,4 +64,24 @@ const char*
 cs_path_getWorkingPath()
 {
 	return workingPath_;
+}
+
+int
+cs_path_changeWorkingPath(const char* newPath)
+{
+	DIR* dirp;
+
+	if(!newPath)
+		return 1;
+
+	dirp = opendir(newPath);
+	if (!dirp)
+		return 1;
+
+	closedir(dirp);
+
+	workingPath_ = realloc(workingPath_, strlen(newPath) + 1);
+	strcpy(workingPath_, newPath);
+
+	return 0;
 }

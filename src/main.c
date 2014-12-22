@@ -110,10 +110,6 @@ printPromote()
 static void
 resetMyArg()
 {
-	myArgc_ = 1;
-
-	for (uint16_t i =  0; i < MY_ARGC_MAX_COUNT; i++)
-		myArgv_[i] = NULL;
 }
 
 
@@ -122,7 +118,10 @@ splitCmd()
 {
 	uint16_t cmdBufferLen;
 
-	resetMyArg();
+	myArgc_ = 1;
+
+	for (uint16_t i =  0; i < MY_ARGC_MAX_COUNT; i++)
+		myArgv_[i] = NULL;
 
 	myArgv_[0] = cmdBuffer_;
 

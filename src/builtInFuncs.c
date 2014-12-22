@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+#include <dirent.h>
 #include <time.h>
 
 #include "path.h"
@@ -80,7 +81,41 @@ pwd(int argc, char* argv[])
 int
 cd(int argc, char* argv[])
 {
-	printf("funciont not done, coming soon...\n");
+	const char* currentPath;
+	const char* cdTo;
+	char* fullPath;
+	size_t fullPathLen;
+
+	/* XXX Not good */
+	if (argc == 1)
+		return 0;
+
+	cdTo = argv[1];
+	currentPath = cs_path_getWorkingPath();
+
+	if (cdTo[0] == '/') {
+		fullPath = (char*) cdTo;
+	} else {
+		/* "currentPath/cdTo", that's what we need */
+		fullPathLen = strlen(currentPath) + 1 + strlen(cdTo);
+		fullPath = (char*) malloc(sizeof(char) * fullPathLen + 1);
+
+		strcpy(fullPath, currentPath);
+		strcat(fullPath, "/");
+		strcat(fullPath, cdTo);
+	}
+
+	/* Conver "/home/xxx/" to "/home/xxx" */
+	if (fullPath[strlen(fullPath) - 1] == '/')
+		fullPath[strlen(fullPath) - 1] = '\0';
+
+	if (cs_path_changeWorkingPath(fullPath)) {
+		printf("no such file or directory: %s\n", cdTo);
+		return 1;
+	}
+
+	if (fullPath != cdTo)
+		free(fullPath);
 
 	return 0;
 }
