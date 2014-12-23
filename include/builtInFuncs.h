@@ -20,13 +20,6 @@
 #ifndef BUILTIN_FUNCS_H
 #define BUILTIN_FUNCS_H
 
-int echo(int argc, char* argv[]);
-int date(int argc, char* argv[]);
-int pwd(int argc, char* argv[]);
-int cd(int argc, char* argv[]);
-int bye(int argc, char* argv[]);
-int hell(int argc, char* argv[]);
-
 int doBuiltinCmd(int argc, char* argv[]);
 
 #endif /* BUILTIN_FUNCS_H */

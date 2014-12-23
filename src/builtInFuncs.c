@@ -33,6 +33,16 @@
 /* XXX This might not a good idea */
 extern uint8_t shellIsRunning_;
 
+static int echo(int argc, char* argv[]);
+static int date(int argc, char* argv[]);
+static int pwd(int argc, char* argv[]);
+static int cd(int argc, char* argv[]);
+static int mkdir(int argc, char* argv[]);
+
+static int bye(int argc, char* argv[]);
+static int hell(int argc, char* argv[]);
+
+
 typedef int(*builtinFuncPtr)(int, char**);
 
 struct builtin {
@@ -45,11 +55,12 @@ static struct builtin builtins[] = {
 	BUILTIN(date),
 	BUILTIN(pwd),
 	BUILTIN(cd),
+	BUILTIN(mkdir),
 	BUILTIN(bye),
 	BUILTIN(hell)
 };
 
-int
+static int
 echo(int argc, char* argv[])
 {
 	for (uint16_t i = 1; i < argc; i++)
@@ -60,7 +71,7 @@ echo(int argc, char* argv[])
 	return 0;
 }
 
-int
+static int
 date(int argc, char* argv[])
 {
 	time_t rawTime;
@@ -71,19 +82,19 @@ date(int argc, char* argv[])
 	return 0;
 }
 
-int
+static int
 pwd(int argc, char* argv[])
 {
 	printf("%s\n", cs_path_getWorkingPath());
 	return 0;
 }
 
-int
+static int
 cd(int argc, char* argv[])
 {
-	const char* currentPath;
-	const char* cdTo;
-	char* fullPath;
+	const char* currentPath = NULL;
+	const char* cdTo = NULL;
+	char* fullPath = NULL;
 	size_t fullPathLen;
 
 	/* XXX Not good */
@@ -105,7 +116,7 @@ cd(int argc, char* argv[])
 		strcat(fullPath, cdTo);
 	}
 
-	/* Conver "/home/xxx/" to "/home/xxx" */
+	/* XXX Conver "/home/xxx/" to "/home/xxx" */
 	if (fullPath[strlen(fullPath) - 1] == '/')
 		fullPath[strlen(fullPath) - 1] = '\0';
 
@@ -120,7 +131,39 @@ cd(int argc, char* argv[])
 	return 0;
 }
 
-int
+static int
+mkdir(int argc, char* argv[])
+{
+	const char* currentPath = NULL;
+	const char* dirPath = NULL;
+	char* fullPath = NULL;
+	size_t fullPathLen;
+
+	if (argc == 1) {
+		printf("%s: missing operand\n", argv[0]);
+		return 1;
+	}
+
+	currentPath = cs_path_getWorkingPath();
+	for (int i = 1; i < argc; ++i) {
+		dirPath = argv[i];
+		fullPathLen = strlen(currentPath) + 1 + strlen(dirPath);
+		fullPath = realloc(fullPath, fullPathLen + 1);
+
+		strcpy(fullPath, currentPath);
+		strcat(fullPath, "/");
+		strcat(fullPath, dirPath);
+
+		if (cs_path_mkdir(fullPath))
+			printf("%s: can not create directory '%s': "
+			       "File exist\n",
+			       argv[0], argv[i]);
+	}
+
+	return 0;
+}
+
+static int
 bye(int argc, char* argv[])
 {
 	shellIsRunning_ = 0;
@@ -128,7 +171,7 @@ bye(int argc, char* argv[])
 	return 0;
 }
 
-int
+static int
 hell(int argc, char* argv[])
 {
 	printf("this is hell!!\n");

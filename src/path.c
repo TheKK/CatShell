@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
+#include <sys/stat.h>
 
 #include "path.h"
 
@@ -72,16 +73,25 @@ cs_path_changeWorkingPath(const char* newPath)
 	DIR* dirp;
 
 	if(!newPath)
-		return 1;
+		return -1;
 
 	dirp = opendir(newPath);
 	if (!dirp)
-		return 1;
+		return -1;
 
 	closedir(dirp);
 
 	workingPath_ = realloc(workingPath_, strlen(newPath) + 1);
 	strcpy(workingPath_, newPath);
+
+	return 0;
+}
+
+int
+cs_path_mkdir(const char* path)
+{
+	if (mkdir(path, 0777) == -1)
+		return -1;
 
 	return 0;
 }

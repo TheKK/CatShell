@@ -25,5 +25,6 @@ void cs_path_quit();
 
 const char* cs_path_getWorkingPath();
 int cs_path_changeWorkingPath(const char* newPath);
+int cs_path_mkdir(const char* path);
 
 #endif /* PATH_H */
