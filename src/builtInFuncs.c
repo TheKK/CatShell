@@ -41,6 +41,7 @@ static int cd(int argc, char* argv[]);
 static int mkdir(int argc, char* argv[]);
 static int cat(int argc, char* argv[]);
 static int bltTime(int argc, char* argv[]);
+static int ls(int argc, char* argv[]);
 
 static int bye(int argc, char* argv[]);
 static int hell(int argc, char* argv[]);
@@ -61,6 +62,7 @@ static struct builtin builtins[] = {
 	BUILTIN(mkdir),
 	BUILTIN(cat),
 	BUILTIN_WITH_NAME(time, bltTime),
+	BUILTIN(ls),
 	BUILTIN(bye),
 	BUILTIN(hell)
 };
@@ -246,6 +248,58 @@ bltTime(int argc, char* argv[])
 	printf("Start clock: %li, stop clock: %li\n", startTime, stopTime);
 	printf("%f user\n",
 	       (float) (stopTime - startTime) / (float) CLOCKS_PER_SEC);
+
+	return 0;
+}
+
+static int
+ls(int argc, char* argv[])
+{
+	const char* currentPath = NULL;
+	char* targetPath = NULL;
+	char* fullPath = NULL;
+	size_t fullPathLen;
+	DIR* dirp = NULL;
+	struct dirent* ent = NULL;
+
+	currentPath = cs_path_getWorkingPath();
+	if (argc == 1) {
+		fullPath = (char*) currentPath;
+		targetPath = "";
+	} else {
+		targetPath = argv[1];
+		if (targetPath[0] == '/') {
+			fullPath = targetPath;
+		} else {
+			fullPathLen =
+				strlen(currentPath) + 1 + strlen(targetPath);
+			fullPath = realloc(fullPath, fullPathLen + 1);
+
+			strcpy(fullPath, currentPath);
+			strcat(fullPath, "/");
+			strcat(fullPath, targetPath);
+		}
+	}
+
+	dirp = opendir(fullPath);
+	if (!dirp) {
+		printf("%s: cannot access %s: No such file or directory\n",
+		       argv[0], targetPath);
+		return 2;
+	}
+
+	while ((ent = readdir(dirp))) {
+		if (ent->d_name[0] == '.')
+			continue;
+		printf("%s\t", ent->d_name);
+	}
+
+	closedir(dirp);
+	dirp = NULL;
+
+	if ((fullPath != targetPath) && (fullPath != currentPath))
+		free(fullPath);
+	fullPath = NULL;
 
 	return 0;
 }
