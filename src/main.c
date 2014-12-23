@@ -103,15 +103,9 @@ l10nInit()
 static void
 printPromote()
 {
-	printf("[CatShell] %s\n", getenv("USER"));
+	printf("\n[CatShell] %s\n", getenv("USER"));
 	printf("$ ");
 }
-
-static void
-resetMyArg()
-{
-}
-
 
 static void
 splitCmd()

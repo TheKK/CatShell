@@ -183,13 +183,20 @@ int
 doBuiltinCmd(int argc, char* argv[])
 {
 	static int  builtinCmdNum = sizeof(builtins) / sizeof(struct builtin);
+	const char* cmd = NULL;
+
+	cmd = argv[0];
+
+	/* No command */
+	if (strcmp(cmd, "") == 0)
+		return 0;
 
 	for (int i = 0; i < builtinCmdNum; i++) {
 		if (strcmp(argv[0], builtins[i].name) == 0)
 			return builtins[i].cmd(argc, argv);
 	}
 
-	printf("Command not found\n");
+	printf("catshell: command not found: %s\n", argv[0]);
 
 	return 2525;
 }
