@@ -29,6 +29,7 @@
 #include "builtInFuncs.h"
 
 #define BUILTIN(cmd) {#cmd, cmd}
+#define BUILTIN_WITH_NAME(cmdName, cmdFunc) {#cmdName, cmdFunc}
 
 /* XXX This might not a good idea */
 extern uint8_t shellIsRunning_;
@@ -39,6 +40,7 @@ static int pwd(int argc, char* argv[]);
 static int cd(int argc, char* argv[]);
 static int mkdir(int argc, char* argv[]);
 static int cat(int argc, char* argv[]);
+static int bltTime(int argc, char* argv[]);
 
 static int bye(int argc, char* argv[]);
 static int hell(int argc, char* argv[]);
@@ -58,6 +60,7 @@ static struct builtin builtins[] = {
 	BUILTIN(cd),
 	BUILTIN(mkdir),
 	BUILTIN(cat),
+	BUILTIN_WITH_NAME(time, bltTime),
 	BUILTIN(bye),
 	BUILTIN(hell)
 };
@@ -189,7 +192,7 @@ cat(int argc, char* argv[])
 			fullPath = (char*) filePath;
 		} else {
 			fullPathLen =
-				strlen(currentPath) + 1 +strlen(filePath);
+				strlen(currentPath) + 1 + strlen(filePath);
 			fullPath = realloc(fullPath, fullPathLen + 1);
 			strcpy(fullPath, currentPath);
 			strcat(fullPath, "/");
@@ -216,6 +219,33 @@ cat(int argc, char* argv[])
 			free(fullPath);
 		fullPath = NULL;
 	}
+
+	return 0;
+}
+
+static int
+bltTime(int argc, char* argv[])
+{
+	time_t startTime, stopTime;
+	int newArgc;
+	char** newArgv;
+
+	if (argc == 1) {
+		printf("%s: missing operand\n", argv[0]);
+		return 1;
+	}
+
+	newArgc = argc - 1;
+	newArgv = &argv[1];
+
+	/* XXX Is this way okay? */
+	startTime = time(NULL);
+	doBuiltinCmd(newArgc, newArgv);
+	stopTime = time(NULL);
+
+	printf("Start clock: %li, stop clock: %li\n", startTime, stopTime);
+	printf("%f user\n",
+	       (float) (stopTime - startTime) / (float) CLOCKS_PER_SEC);
 
 	return 0;
 }
