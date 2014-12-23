@@ -23,6 +23,7 @@
 #include <string.h>
 #include <dirent.h>
 #include <time.h>
+#include <sys/stat.h>
 
 #include "path.h"
 
@@ -38,10 +39,11 @@ static int echo(int argc, char* argv[]);
 static int date(int argc, char* argv[]);
 static int pwd(int argc, char* argv[]);
 static int cd(int argc, char* argv[]);
-static int mkdir(int argc, char* argv[]);
+static int bltMkdir(int argc, char* argv[]);
 static int cat(int argc, char* argv[]);
 static int bltTime(int argc, char* argv[]);
 static int ls(int argc, char* argv[]);
+static int du(int argc, char* argv[]);
 
 static int bye(int argc, char* argv[]);
 static int hell(int argc, char* argv[]);
@@ -59,10 +61,11 @@ static struct builtin builtins[] = {
 	BUILTIN(date),
 	BUILTIN(pwd),
 	BUILTIN(cd),
-	BUILTIN(mkdir),
+	BUILTIN_WITH_NAME(mkdir, bltMkdir),
 	BUILTIN(cat),
 	BUILTIN_WITH_NAME(time, bltTime),
 	BUILTIN(ls),
+	BUILTIN(du),
 	BUILTIN(bye),
 	BUILTIN(hell)
 };
@@ -139,7 +142,7 @@ cd(int argc, char* argv[])
 }
 
 static int
-mkdir(int argc, char* argv[])
+bltMkdir(int argc, char* argv[])
 {
 	const char* currentPath = NULL;
 	const char* dirPath = NULL;
@@ -273,7 +276,8 @@ ls(int argc, char* argv[])
 		} else {
 			fullPathLen =
 				strlen(currentPath) + 1 + strlen(targetPath);
-			fullPath = realloc(fullPath, fullPathLen + 1);
+			fullPath =
+				(char*) malloc(sizeof(char) * fullPathLen + 1);
 
 			strcpy(fullPath, currentPath);
 			strcat(fullPath, "/");
@@ -298,6 +302,54 @@ ls(int argc, char* argv[])
 	dirp = NULL;
 
 	if ((fullPath != targetPath) && (fullPath != currentPath))
+		free(fullPath);
+	fullPath = NULL;
+
+	return 0;
+}
+
+static int
+du(int argc, char* argv[])
+{
+	const char* currentPath = NULL;
+	char* targetPath = NULL;
+	char* fullPath = NULL;
+	size_t fullPathLen;
+	struct stat st;
+
+	if (argc == 1) {
+		printf("%s: missing operand\n", argv[0]);
+		return 1;
+	}
+
+	currentPath = cs_path_getWorkingPath();
+	targetPath = argv[1];
+
+	if (targetPath[0] == '/') {
+		fullPath = targetPath;
+	} else {
+		fullPathLen = strlen(currentPath) + 1 + strlen(targetPath);
+		fullPath = (char*) malloc(sizeof(char) * fullPathLen + 1);
+
+		strcpy(fullPath, currentPath);
+		strcat(fullPath, "/");
+		strcat(fullPath, targetPath);
+	}
+
+	if (stat(fullPath, &st) == -1) {
+		if (fullPath != targetPath)
+			free(fullPath);
+		fullPath = NULL;
+
+		printf("%s: file or directory not exist: %s\n",
+		       argv[0], targetPath);
+
+		return 1;
+	}
+
+	printf("%fK\t%s\n", ((float)st.st_size / 1024.0), targetPath);
+
+	if (fullPath != targetPath)
 		free(fullPath);
 	fullPath = NULL;
 
