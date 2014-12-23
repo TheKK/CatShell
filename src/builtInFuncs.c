@@ -38,6 +38,7 @@ static int date(int argc, char* argv[]);
 static int pwd(int argc, char* argv[]);
 static int cd(int argc, char* argv[]);
 static int mkdir(int argc, char* argv[]);
+static int cat(int argc, char* argv[]);
 
 static int bye(int argc, char* argv[]);
 static int hell(int argc, char* argv[]);
@@ -56,6 +57,7 @@ static struct builtin builtins[] = {
 	BUILTIN(pwd),
 	BUILTIN(cd),
 	BUILTIN(mkdir),
+	BUILTIN(cat),
 	BUILTIN(bye),
 	BUILTIN(hell)
 };
@@ -158,6 +160,61 @@ mkdir(int argc, char* argv[])
 			printf("%s: can not create directory '%s': "
 			       "File exist\n",
 			       argv[0], argv[i]);
+	}
+
+	return 0;
+}
+
+static int
+cat(int argc, char* argv[])
+{
+	const char* currentPath = NULL;
+	const char* filePath = NULL;
+	char* fullPath = NULL;
+	size_t fullPathLen;
+	FILE* fd = NULL;
+	char* strBuf = NULL;
+	size_t strLen;
+
+	if (argc == 1) {
+		printf("%s: missing operand\n", argv[0]);
+		return 1;
+	}
+
+	currentPath = cs_path_getWorkingPath();
+	for (int i = 1; i < argc; ++i) {
+		filePath = argv[i];
+
+		if (filePath[0] == '/') {
+			fullPath = (char*) filePath;
+		} else {
+			fullPathLen =
+				strlen(currentPath) + 1 +strlen(filePath);
+			fullPath = realloc(fullPath, fullPathLen + 1);
+			strcpy(fullPath, currentPath);
+			strcat(fullPath, "/");
+			strcat(fullPath, filePath);
+		}
+
+		fd = fopen(fullPath, "rb");
+		if (!fd) {
+			printf("%s: %s: No such file or directory\n",
+			       argv[0], filePath);
+			continue;
+		}
+
+		while (getline(&strBuf, &strLen, fd) != -1)
+			printf("%s", strBuf);
+
+		free(strBuf);
+		strBuf = NULL;
+
+		fclose(fd);
+		fd = NULL;
+
+		if (fullPath != argv[i])
+			free(fullPath);
+		fullPath = NULL;
 	}
 
 	return 0;
