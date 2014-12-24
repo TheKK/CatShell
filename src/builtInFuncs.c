@@ -45,6 +45,7 @@ static int cat(int argc, const char* argv[]);
 static int bltTime(int argc, const char* argv[]);
 static int ls(int argc, const char* argv[]);
 static int du(int argc, const char* argv[]);
+static int ps(int argc, const char* argv[]);
 
 static int bye(int argc, const char* argv[]);
 static int hell(int argc, const char* argv[]);
@@ -67,6 +68,7 @@ static struct builtin builtins[] = {
 	BUILTIN_WITH_NAME(time, bltTime),
 	BUILTIN(ls),
 	BUILTIN(du),
+	BUILTIN(ps),
 	BUILTIN(bye),
 	BUILTIN(hell)
 };
@@ -355,6 +357,81 @@ du(int argc, const char* argv[])
 	if (fullPath != targetPath)
 		free(fullPath);
 	fullPath = NULL;
+
+	return 0;
+}
+
+static int
+ps(int argc, const char* argv[])
+{
+	DIR* dirp = NULL;
+	struct dirent* ent = NULL;
+	char* fullPath = NULL;
+	FILE* fd = NULL;
+	char buf[300];
+	char* tok = NULL;;
+	int i, pid, utime, tty;
+	char* cmd = NULL;
+
+	dirp = opendir("/proc");
+	if (!dirp) {
+		fprintf(cs_pipe_getOutputStream(), "sorry, but Linux only\n");
+
+		return 1;
+	}
+
+	printf("%6s %-10s %10s %-10s\n", "PID", "TTY", "TIME", "CMD");
+	while ((ent = readdir(dirp))) {
+		if (ent->d_type == DT_DIR) {
+			if (strcspn(ent->d_name, "0123456789") == 0) {
+				fullPath =
+					(char*) malloc(sizeof(char) *
+						       (strlen("/proc/") +
+							strlen(ent->d_name) +
+							strlen("/stat")));
+				strcpy(fullPath, "/proc/");
+				strcat(fullPath, ent->d_name);
+				strcat(fullPath, "/stat");
+				fd = fopen(fullPath, "rb");
+				if (!fd) {
+					fprintf(stderr,
+						"this should not happend\n");
+					exit (1);
+				}
+
+				fgets(buf, sizeof(buf), fd);
+				fclose(fd);
+
+				i = 1;
+				tok = strtok(buf, " ()");
+				while (tok) {
+					switch (i) {
+					case 1: /* pid */
+						pid = atoi(tok);
+						break;
+					case 2: /* file name */
+						cmd = tok;
+						break;
+					case 7: /* tty_nr */
+						tty = atoi(tok);
+						break;
+					case 14: /* utime */
+						utime = atoi(tok);
+						break;
+					}
+					++i;
+					tok = strtok(NULL, " ()");
+				}
+				printf("%6d %-10d %10d %-10s\n",
+				       pid, tty, utime, cmd);
+
+				free(fullPath);
+			}
+		}
+	}
+
+	closedir(dirp);
+	dirp = NULL;
 
 	return 0;
 }

@@ -152,7 +152,8 @@ cs_parser_readUserInput()
 		/* TODO try to record size of argv_[] entries */
 		/*if (strlen(tok) > strlen(argv_[argc_])) {*/
 			/*argv_[argc_] =*/
-				/*(char*) realloc(argv_[argc_], strlen(tok) + 1);*/
+				/*(char*) realloc(argv_[argc_],*/
+						/*strlen(tok) + 1);*/
 		/*}*/
 		strncpy(argv_[argc_], tok, strlen(tok) + 1);
 
