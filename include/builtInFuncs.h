@@ -20,6 +20,8 @@
 #ifndef BUILTIN_FUNCS_H
 #define BUILTIN_FUNCS_H
 
-int doBuiltinCmd(int argc, char* argv[]);
+#define BLTCMD_NOT_FOUND 2525
+
+int doBuiltinCmd(int argc, const char** argv);
 
 #endif /* BUILTIN_FUNCS_H */

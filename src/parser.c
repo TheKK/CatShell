@@ -31,7 +31,7 @@ static char* rawUserInput_ = NULL;
 static size_t rawUserInputLen_ = BUF_SIZE;
 static int argc_;
 static char** argv_ = NULL;
-static size_t argvLen_ = 10;
+static size_t argvLen_ = 2;
 
 static void
 cs_parser_enlargeArgv(size_t newSize)
@@ -48,6 +48,9 @@ cs_parser_enlargeArgv(size_t newSize)
 	}
 
 	memcpy(ptrPtr, argv_, sizeof(char*) * argvLen_);
+
+	for (size_t i = argvLen_; i < newSize; ++i)
+		ptrPtr[i] = (char*) malloc(sizeof(char) * 20);
 
 	free(argv_);
 	argv_ = ptrPtr;
@@ -90,8 +93,9 @@ cs_parser_init()
 		return -1;
 	}
 
+	/* XXX Bad hack */
 	for (size_t i = 0; i < argvLen_; ++i)
-		argv_[i] = (char*) malloc(sizeof(char) * 10);
+		argv_[i] = (char*) malloc(sizeof(char) * 20);
 
 	return 0;
 }
@@ -132,6 +136,7 @@ cs_parser_readUserInput()
 		if (strchr(buf, '\n'))
 			break;
 	}
+	rawUserInput_[strlen(rawUserInput_) - 1] = '\0';
 
 	/* Parse */
 	rawUserInputCopy = (char*) malloc(sizeof(char) * rawUserInputLen_);
@@ -140,6 +145,7 @@ cs_parser_readUserInput()
 	argc_ = 0;
 	tok = strtok(rawUserInputCopy, " ");
 	while (tok) {
+		/* TODO try to record size of argv_[] entries */
 		/*if (strlen(tok) > strlen(argv_[argc_])) {*/
 			/*argv_[argc_] =*/
 				/*(char*) realloc(argv_[argc_], strlen(tok) + 1);*/
@@ -147,8 +153,8 @@ cs_parser_readUserInput()
 		strncpy(argv_[argc_], tok, strlen(tok) + 1);
 
 		++argc_;
-		if (argc_ > argvLen_)
-			cs_parser_enlargeArgv(argc_);
+		if (argc_ == argvLen_)
+			cs_parser_enlargeArgv(argvLen_ * 2);
 
 		tok = strtok(NULL, " ");
 	}

@@ -34,6 +34,7 @@
 #include "builtInFuncs.h"
 #include "sysfilesystem.h"
 #include "pipe.h"
+#include "parser.h"
 
 #define _(STRING) gettext(STRING)
 
@@ -42,13 +43,6 @@
 
 /* TODO move this to other file */
 uint8_t shellIsRunning_ = 1;
-
-static char cmdBuffer_[USER_INPUT_BUFFER_SIZE];
-
-static uint16_t myArgc_;
-static char* myArgv_[MY_ARGC_MAX_COUNT];
-
-static int32_t returnValue_;
 
 static void
 showVersion()
@@ -89,6 +83,9 @@ init()
 
 	if (cs_pipe_init())
 		exit(1);
+
+	if (cs_parser_init())
+		exit(1);
 }
 
 static void
@@ -96,6 +93,7 @@ quit()
 {
 	cs_path_quit();
 	cs_pipe_quit();
+	cs_parser_quit();
 }
 
 static void
@@ -113,57 +111,12 @@ printPromote()
 	printf("$ ");
 }
 
-static void
-parseCmd()
-{
-	uint16_t cmdBufferLen;
-	char* ptr = NULL;
-
-	myArgc_ = 1;
-
-	for (uint16_t i =  0; i < MY_ARGC_MAX_COUNT; ++i)
-		myArgv_[i] = NULL;
-
-	myArgv_[0] = cmdBuffer_;
-
-	ptr = strstr(cmdBuffer_, ">");
-	if (ptr) {
-		/* XXX bad, bad, bad hack */
-		char* pipeTarget = NULL;
-		FILE* fd = NULL;
-
-		*(ptr - 1) = '\0';
-
-		pipeTarget = ptr + 2;
-		pipeTarget[strlen(pipeTarget) - 1] = '\0';
-		fd = fopen(pipeTarget, "wb");
-
-		cs_pipe_setOutputStream(fd);
-	} else {
-		cs_pipe_setDefaultOutputStream();
-	}
-
-	cmdBufferLen = strlen(cmdBuffer_);
-	for (uint16_t i = 0; i < cmdBufferLen; ++i) {
-		if (cmdBuffer_[i] == '\0')
-			break;
-
-		if (cmdBuffer_[i] == ' ') {
-			myArgv_[myArgc_] = &cmdBuffer_[i + 1];
-			myArgc_++;
-			cmdBuffer_[i] = '\0';
-		}
-
-		if (cmdBuffer_[i] == '\n') {
-			cmdBuffer_[i] = '\0';
-			break;
-		}
-	}
-}
-
 int
 main(int argc, char* argv[])
 {
+	const char** myArgv = NULL;
+	int myArgc;
+
 	init();
 	l10nInit();
 
@@ -171,10 +124,14 @@ main(int argc, char* argv[])
 
 	while (shellIsRunning_) {
 		printPromote();
-		/* XXX use getline() */
-		fgets(cmdBuffer_, USER_INPUT_BUFFER_SIZE, stdin);
-		parseCmd();
-		returnValue_ = doBuiltinCmd(myArgc_, myArgv_);
+		cs_parser_readUserInput();
+
+		myArgv = cs_parser_getArgv();
+		myArgc = cs_parser_getArgc();
+
+		if (doBuiltinCmd(myArgc, myArgv))
+			printf("catshell: command not found: %s\n", argv[0]);
+			/*returnValue_ = system(myArgv_[0]);*/
 	}
 
 	quit();

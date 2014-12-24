@@ -36,21 +36,21 @@
 /* XXX This might not a good idea */
 extern uint8_t shellIsRunning_;
 
-static int echo(int argc, char* argv[]);
-static int date(int argc, char* argv[]);
-static int pwd(int argc, char* argv[]);
-static int cd(int argc, char* argv[]);
-static int bltMkdir(int argc, char* argv[]);
-static int cat(int argc, char* argv[]);
-static int bltTime(int argc, char* argv[]);
-static int ls(int argc, char* argv[]);
-static int du(int argc, char* argv[]);
+static int echo(int argc, const char* argv[]);
+static int date(int argc, const char* argv[]);
+static int pwd(int argc, const char* argv[]);
+static int cd(int argc, const char* argv[]);
+static int bltMkdir(int argc, const char* argv[]);
+static int cat(int argc, const char* argv[]);
+static int bltTime(int argc, const char* argv[]);
+static int ls(int argc, const char* argv[]);
+static int du(int argc, const char* argv[]);
 
-static int bye(int argc, char* argv[]);
-static int hell(int argc, char* argv[]);
+static int bye(int argc, const char* argv[]);
+static int hell(int argc, const char* argv[]);
 
 
-typedef int(*builtinFuncPtr)(int, char**);
+typedef int(*builtinFuncPtr)(int, const char**);
 
 struct builtin {
 	char* name;
@@ -72,7 +72,7 @@ static struct builtin builtins[] = {
 };
 
 static int
-echo(int argc, char* argv[])
+echo(int argc, const char* argv[])
 {
 	for (uint16_t i = 1; i < argc; i++)
 		fprintf(cs_pipe_getOutputStream(),
@@ -85,7 +85,7 @@ echo(int argc, char* argv[])
 }
 
 static int
-date(int argc, char* argv[])
+date(int argc, const char* argv[])
 {
 	time_t rawTime;
 
@@ -96,14 +96,14 @@ date(int argc, char* argv[])
 }
 
 static int
-pwd(int argc, char* argv[])
+pwd(int argc, const char* argv[])
 {
 	printf("%s\n", cs_path_getWorkingPath());
 	return 0;
 }
 
 static int
-cd(int argc, char* argv[])
+cd(int argc, const char* argv[])
 {
 	const char* currentPath = NULL;
 	const char* cdTo = NULL;
@@ -145,7 +145,7 @@ cd(int argc, char* argv[])
 }
 
 static int
-bltMkdir(int argc, char* argv[])
+bltMkdir(int argc, const char* argv[])
 {
 	const char* currentPath = NULL;
 	const char* dirPath = NULL;
@@ -177,7 +177,7 @@ bltMkdir(int argc, char* argv[])
 }
 
 static int
-cat(int argc, char* argv[])
+cat(int argc, const char* argv[])
 {
 	const char* currentPath = NULL;
 	const char* filePath = NULL;
@@ -232,11 +232,11 @@ cat(int argc, char* argv[])
 }
 
 static int
-bltTime(int argc, char* argv[])
+bltTime(int argc, const char* argv[])
 {
 	time_t startTime, stopTime;
 	int newArgc;
-	char** newArgv;
+	const char** newArgv;
 
 	if (argc == 1) {
 		printf("%s: missing operand\n", argv[0]);
@@ -259,10 +259,10 @@ bltTime(int argc, char* argv[])
 }
 
 static int
-ls(int argc, char* argv[])
+ls(int argc, const char* argv[])
 {
 	const char* currentPath = NULL;
-	char* targetPath = NULL;
+	const char* targetPath = NULL;
 	char* fullPath = NULL;
 	size_t fullPathLen;
 	DIR* dirp = NULL;
@@ -275,7 +275,7 @@ ls(int argc, char* argv[])
 	} else {
 		targetPath = argv[1];
 		if (targetPath[0] == '/') {
-			fullPath = targetPath;
+			fullPath = (char*) targetPath;
 		} else {
 			fullPathLen =
 				strlen(currentPath) + 1 + strlen(targetPath);
@@ -312,10 +312,10 @@ ls(int argc, char* argv[])
 }
 
 static int
-du(int argc, char* argv[])
+du(int argc, const char* argv[])
 {
 	const char* currentPath = NULL;
-	char* targetPath = NULL;
+	const char* targetPath = NULL;
 	char* fullPath = NULL;
 	size_t fullPathLen;
 	struct stat st;
@@ -329,7 +329,7 @@ du(int argc, char* argv[])
 	targetPath = argv[1];
 
 	if (targetPath[0] == '/') {
-		fullPath = targetPath;
+		fullPath = (char*) targetPath;
 	} else {
 		fullPathLen = strlen(currentPath) + 1 + strlen(targetPath);
 		fullPath = (char*) malloc(sizeof(char) * fullPathLen + 1);
@@ -360,7 +360,7 @@ du(int argc, char* argv[])
 }
 
 static int
-bye(int argc, char* argv[])
+bye(int argc, const char* argv[])
 {
 	shellIsRunning_ = 0;
 
@@ -368,7 +368,7 @@ bye(int argc, char* argv[])
 }
 
 static int
-hell(int argc, char* argv[])
+hell(int argc, const char* argv[])
 {
 	printf("this is hell!!\n");
 
@@ -376,23 +376,20 @@ hell(int argc, char* argv[])
 }
 
 int
-doBuiltinCmd(int argc, char* argv[])
+doBuiltinCmd(int argc, const char** argv)
 {
 	static int  builtinCmdNum = sizeof(builtins) / sizeof(struct builtin);
-	const char* cmd = NULL;
+	const char* cmdName = NULL;
 
-	cmd = argv[0];
-
-	/* No command */
-	if (strcmp(cmd, "") == 0)
-		return 0;
+	cmdName = argv[0];
 
 	for (int i = 0; i < builtinCmdNum; i++) {
-		if (strcmp(argv[0], builtins[i].name) == 0)
-			return builtins[i].cmd(argc, argv);
+		if (strcmp(cmdName, builtins[i].name) == 0) {
+			/* TODO add cs_state or something */
+			builtins[i].cmd(argc, argv);
+			return 0;
+		}
 	}
 
-	printf("catshell: command not found: %s\n", argv[0]);
-
-	return 2525;
+	return BLTCMD_NOT_FOUND;
 }
