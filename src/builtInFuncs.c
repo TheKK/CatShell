@@ -26,6 +26,7 @@
 #include <sys/stat.h>
 
 #include "path.h"
+#include "pipe.h"
 
 #include "builtInFuncs.h"
 
@@ -74,9 +75,11 @@ static int
 echo(int argc, char* argv[])
 {
 	for (uint16_t i = 1; i < argc; i++)
-		printf("%s ", argv[i]);
+		fprintf(cs_pipe_getOutputStream(),
+			"%s ", argv[i]);
 
-	printf("\n");
+	fprintf(cs_pipe_getOutputStream(),
+		"\n");
 
 	return 0;
 }

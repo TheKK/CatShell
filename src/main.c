@@ -33,12 +33,14 @@
 #include "path.h"
 #include "builtInFuncs.h"
 #include "sysfilesystem.h"
+#include "pipe.h"
 
 #define _(STRING) gettext(STRING)
 
 #define USER_INPUT_BUFFER_SIZE 200
 #define MY_ARGC_MAX_COUNT 50
 
+/* TODO move this to other file */
 uint8_t shellIsRunning_ = 1;
 
 static char cmdBuffer_[USER_INPUT_BUFFER_SIZE];
@@ -84,12 +86,16 @@ init()
 {
 	if (cs_path_init())
 		exit(1);
+
+	if (cs_pipe_init())
+		exit(1);
 }
 
 static void
 quit()
 {
 	cs_path_quit();
+	cs_pipe_quit();
 }
 
 static void
@@ -108,20 +114,40 @@ printPromote()
 }
 
 static void
-splitCmd()
+parseCmd()
 {
 	uint16_t cmdBufferLen;
+	char* ptr = NULL;
 
 	myArgc_ = 1;
 
-	for (uint16_t i =  0; i < MY_ARGC_MAX_COUNT; i++)
+	for (uint16_t i =  0; i < MY_ARGC_MAX_COUNT; ++i)
 		myArgv_[i] = NULL;
 
 	myArgv_[0] = cmdBuffer_;
 
-	cmdBufferLen = strlen(cmdBuffer_);
+	ptr = strstr(cmdBuffer_, ">");
+	if (ptr) {
+		/* XXX bad, bad, bad hack */
+		char* pipeTarget = NULL;
+		FILE* fd = NULL;
 
-	for (uint16_t i = 0; i < cmdBufferLen; i++) {
+		*(ptr - 1) = '\0';
+
+		pipeTarget = ptr + 2;
+		pipeTarget[strlen(pipeTarget) - 1] = '\0';
+		fd = fopen(pipeTarget, "wb");
+
+		cs_pipe_setOutputStream(fd);
+	} else {
+		cs_pipe_setDefaultOutputStream();
+	}
+
+	cmdBufferLen = strlen(cmdBuffer_);
+	for (uint16_t i = 0; i < cmdBufferLen; ++i) {
+		if (cmdBuffer_[i] == '\0')
+			break;
+
 		if (cmdBuffer_[i] == ' ') {
 			myArgv_[myArgc_] = &cmdBuffer_[i + 1];
 			myArgc_++;
@@ -145,9 +171,9 @@ main(int argc, char* argv[])
 
 	while (shellIsRunning_) {
 		printPromote();
+		/* XXX use getline() */
 		fgets(cmdBuffer_, USER_INPUT_BUFFER_SIZE, stdin);
-
-		splitCmd();
+		parseCmd();
 		returnValue_ = doBuiltinCmd(myArgc_, myArgv_);
 	}
 
