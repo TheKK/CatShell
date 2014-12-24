@@ -129,9 +129,15 @@ main(int argc, char* argv[])
 		myArgv = cs_parser_getArgv();
 		myArgc = cs_parser_getArgc();
 
-		if (doBuiltinCmd(myArgc, myArgv))
-			printf("catshell: command not found: %s\n", argv[0]);
-			/*returnValue_ = system(myArgv_[0]);*/
+		if (doBuiltinCmd(myArgc, myArgv) == 0)
+			continue;
+
+		/* Command not found return value, dunno why */
+		if (system(cs_parser_getRawUserInput()) != 127)
+			continue;
+
+		printf("catshell: command not found: %s\n",
+		       cs_parser_getArgv()[0]);
 	}
 
 	quit();

@@ -46,6 +46,7 @@ static int bltTime(int argc, const char* argv[]);
 static int ls(int argc, const char* argv[]);
 static int du(int argc, const char* argv[]);
 static int ps(int argc, const char* argv[]);
+static int help(int argc, const char* argv[]);
 
 static int bye(int argc, const char* argv[]);
 static int hell(int argc, const char* argv[]);
@@ -69,6 +70,7 @@ static struct builtin builtins[] = {
 	BUILTIN(ls),
 	BUILTIN(du),
 	BUILTIN(ps),
+	BUILTIN(help),
 	BUILTIN(bye),
 	BUILTIN(hell)
 };
@@ -437,6 +439,19 @@ ps(int argc, const char* argv[])
 }
 
 static int
+help(int argc, const char* argv[])
+{
+	/* FIXME same code */
+	static int  builtinCmdNum = sizeof(builtins) / sizeof(struct builtin);
+
+	fprintf(cs_pipe_getOutputStream(), "Avaliable builtin command:\n");
+	for (int i = 0; i < builtinCmdNum; i++)
+		fprintf(cs_pipe_getOutputStream(), "%s\n", builtins[i].name);
+
+	return 0;
+}
+
+static int
 bye(int argc, const char* argv[])
 {
 	shellIsRunning_ = 0;
@@ -459,6 +474,9 @@ doBuiltinCmd(int argc, const char** argv)
 	const char* cmdName = NULL;
 
 	cmdName = argv[0];
+
+	if (strcmp(cmdName, "") == 0)
+		return 0;
 
 	for (int i = 0; i < builtinCmdNum; i++) {
 		if (strcmp(cmdName, builtins[i].name) == 0) {
