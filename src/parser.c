@@ -23,6 +23,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "pipe.h"
+
 #define BUF_SIZE 50
 
 static char buf[BUF_SIZE];
@@ -123,6 +125,7 @@ cs_parser_readUserInput()
 	size_t currentLen = 0;
 	char* tok = NULL;
 	char* rawUserInputCopy = NULL;
+	int originArgc;
 
 	/* Read */
 	memset(rawUserInput_, 0, rawUserInputLen_);
@@ -139,6 +142,7 @@ cs_parser_readUserInput()
 	rawUserInput_[strlen(rawUserInput_) - 1] = '\0';
 
 	/* Parse */
+	/* token */
 	rawUserInputCopy = (char*) malloc(sizeof(char) * rawUserInputLen_);
 	strncpy(rawUserInputCopy, rawUserInput_, rawUserInputLen_);
 
@@ -157,6 +161,29 @@ cs_parser_readUserInput()
 			cs_parser_enlargeArgv(argvLen_ * 2);
 
 		tok = strtok(NULL, " ");
+	}
+
+	/* special keywork */
+	originArgc = argc_;
+	for (int i = 0; i < originArgc; ++i) {
+		if (strstr(argv_[i], ">")) {
+			FILE* fd = NULL;
+
+			fd = fopen(argv_[i +1], "wb");
+			cs_pipe_setOutputStream(fd);
+
+			argc_ -= 2;
+			for (int j = i; j < originArgc; ++j) {
+				char* tmp;
+
+				tmp = argv_[j];
+				argv_[j] = argv_[j + 2];
+				argv_[j + 2] = tmp;
+			}
+			break;
+		} else {
+			cs_pipe_setDefaultOutputStream();
+		}
 	}
 
 	free(rawUserInputCopy);
