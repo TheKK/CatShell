@@ -103,7 +103,7 @@ l10nInit()
 static void
 printPromote()
 {
-	printf("\n[CatShell] %s\n", getenv("USER"));
+	printf("\n# %s in %s\n", getenv("USER"), cs_path_getWorkingPath());
 	printf("$ ");
 }
 
