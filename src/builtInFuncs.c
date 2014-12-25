@@ -304,6 +304,7 @@ ls(int argc, const char* argv[])
 			continue;
 		printf("%s\t", ent->d_name);
 	}
+	printf("\n");
 
 	closedir(dirp);
 	dirp = NULL;

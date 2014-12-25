@@ -35,6 +35,7 @@
 #include "sysfilesystem.h"
 #include "pipe.h"
 #include "parser.h"
+#include "cmdline.h"
 
 #define _(STRING) gettext(STRING)
 
@@ -86,6 +87,10 @@ init()
 
 	if (cs_parser_init())
 		exit(1);
+
+	if (cs_cmdline_init())
+		exit(1);
+
 }
 
 static void
@@ -94,6 +99,7 @@ quit()
 	cs_path_quit();
 	cs_pipe_quit();
 	cs_parser_quit();
+	cs_cmdline_quit();
 }
 
 static void
@@ -104,38 +110,24 @@ l10nInit()
 	textdomain("CatChat_client");
 }
 
-static void
-printPromote()
-{
-	printf("\n"
-	       "\x1B[1m" "\x1B[34m" "# " "\033[0m" "%s in %s\n",
-	       getenv("USER"), cs_path_getWorkingPath());
-	printf("$ ");
-}
-
 int
 main(int argc, char* argv[])
 {
-	const char** myArgv = NULL;
-	int myArgc;
-
 	init();
 	l10nInit();
 
 	getOptions(argc, argv);
 
 	while (shellIsRunning_) {
-		printPromote();
-		cs_parser_readUserInput();
+		cs_cmdline_handleUserInput();
 
-		myArgv = cs_parser_getArgv();
-		myArgc = cs_parser_getArgc();
+		cs_parser_parse(cs_cmdline_getCmdBuf());
 
-		if (doBuiltinCmd(myArgc, myArgv) == 0)
+		if (doBuiltinCmd(cs_parser_getArgc(), cs_parser_getArgv()) == 0)
 			continue;
 
 		/* Command not found return value, dunno why */
-		if (system(cs_parser_getRawUserInput()) != 127)
+		if (system(cs_cmdline_getCmdBuf()) != 127)
 			continue;
 
 		printf("catshell: command not found: %s\n",

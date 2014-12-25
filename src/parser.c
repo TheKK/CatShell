@@ -27,10 +27,6 @@
 
 #define BUF_SIZE 50
 
-static char buf[BUF_SIZE];
-
-static char* rawUserInput_ = NULL;
-static size_t rawUserInputLen_ = BUF_SIZE;
 static int argc_;
 static char** argv_ = NULL;
 static size_t argvLen_ = 2;
@@ -59,36 +55,9 @@ cs_parser_enlargeArgv(size_t newSize)
 	argvLen_ = newSize;
 }
 
-static void
-cs_parser_enlargeRawUserInpu(size_t newSize)
-{
-	char* ptr = NULL;
-
-	if (newSize <= rawUserInputLen_)
-		return;
-
-	ptr = (char*) malloc(sizeof(char) * newSize);
-	if (!ptr) {
-		fprintf(stderr, "Out of memory!!\n");
-		exit(1);
-	}
-
-	strncpy(ptr, rawUserInput_, rawUserInputLen_);
-
-	free(rawUserInput_);
-	rawUserInput_ = ptr;
-	rawUserInputLen_ = newSize;
-}
-
 int
 cs_parser_init()
 {
-	rawUserInput_ = (char*) malloc(sizeof(char) * rawUserInputLen_);
-	if (!rawUserInput_) {
-		fprintf(stderr, "Out of memory!!\n");
-		return -1;
-	}
-
 	argv_ = (char**) malloc(sizeof(char*) * argvLen_);
 	if (!argv_) {
 		fprintf(stderr, "Out of memory!!\n");
@@ -105,14 +74,11 @@ cs_parser_init()
 void
 cs_parser_quit()
 {
-	free(rawUserInput_);
-	rawUserInput_ = NULL;
-	rawUserInputLen_ = 0;
-
 	for (size_t i = 0; i < argvLen_; ++i) {
 		free(argv_[i]);
 		argv_[i] = NULL;
 	}
+
 	free(argv_);
 	argv_ = NULL;
 	argvLen_ = 0;
@@ -120,34 +86,17 @@ cs_parser_quit()
 
 
 void
-cs_parser_readUserInput()
+cs_parser_parse(const char* cmdLine)
 {
-	size_t currentLen = 0;
 	char* tok = NULL;
-	char* rawUserInputCopy = NULL;
+	char* cmdLineCopy = NULL;
 	int originArgc;
 
-	/* Read */
-	memset(rawUserInput_, 0, rawUserInputLen_);
-	while (fgets(buf, BUF_SIZE, stdin)) {
-		currentLen += BUF_SIZE;
-		if (currentLen > rawUserInputLen_)
-			cs_parser_enlargeRawUserInpu(rawUserInputLen_ * 2);
-
-		strncat(rawUserInput_, buf, BUF_SIZE);
-
-		if (strchr(buf, '\n'))
-			break;
-	}
-	rawUserInput_[strlen(rawUserInput_) - 1] = '\0';
-
-	/* Parse */
-	/* token */
-	rawUserInputCopy = (char*) malloc(sizeof(char) * rawUserInputLen_);
-	strncpy(rawUserInputCopy, rawUserInput_, rawUserInputLen_);
+	cmdLineCopy = (char*) malloc(sizeof(char) * strlen(cmdLine) + 1);
+	strncpy(cmdLineCopy, cmdLine, strlen(cmdLine) + 1);
 
 	argc_ = 0;
-	tok = strtok(rawUserInputCopy, " ");
+	tok = strtok(cmdLineCopy, " ");
 	while (tok) {
 		/* TODO try to record size of argv_[] entries */
 		/*if (strlen(tok) > strlen(argv_[argc_])) {*/
@@ -187,16 +136,9 @@ cs_parser_readUserInput()
 		}
 	}
 
-	free(rawUserInputCopy);
-	rawUserInputCopy = NULL;
+	free(cmdLineCopy);
+	cmdLineCopy = NULL;
 	tok = NULL;
-}
-
-
-const char*
-cs_parser_getRawUserInput()
-{
-	return rawUserInput_;
 }
 
 int

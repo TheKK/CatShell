@@ -17,17 +17,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef PARSER_H
-#define PARSER_H
+#define CS_KEY_RETURN 10
+#define CS_KEY_BACKSPACE 127
+#define CS_KEY_TAB 9
+#define CS_KEY_CTLP 16
+#define CS_KEY_CTLN 14
 
-int cs_parser_init();
-void cs_parser_quit();
+int cs_cmdline_init();
+void cs_cmdline_quit();
 
-void cs_parser_parse(const char* cmdLine);
-
-const char* cs_parser_getRawUserInput();
-
-int cs_parser_getArgc();
-const char** cs_parser_getArgv();
-
-#endif /* PARSER_H */
+void cs_cmdline_handleUserInput();
+const char* cs_cmdline_getCmdBuf();

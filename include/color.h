@@ -16,18 +16,3 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-
-#ifndef PARSER_H
-#define PARSER_H
-
-int cs_parser_init();
-void cs_parser_quit();
-
-void cs_parser_parse(const char* cmdLine);
-
-const char* cs_parser_getRawUserInput();
-
-int cs_parser_getArgc();
-const char** cs_parser_getArgv();
-
-#endif /* PARSER_H */
