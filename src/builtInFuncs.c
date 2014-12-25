@@ -94,7 +94,7 @@ date(int argc, const char* argv[])
 	time_t rawTime;
 
 	rawTime = time(NULL);
-	printf("%s", ctime(&rawTime));
+	fprintf(cs_pipe_getOutputStream(), "%s", ctime(&rawTime));
 
 	return 0;
 }
@@ -102,7 +102,7 @@ date(int argc, const char* argv[])
 static int
 pwd(int argc, const char* argv[])
 {
-	printf("%s\n", cs_path_getWorkingPath());
+	fprintf(cs_pipe_getOutputStream(), "%s\n", cs_path_getWorkingPath());
 	return 0;
 }
 
@@ -138,7 +138,7 @@ cd(int argc, const char* argv[])
 		fullPath[strlen(fullPath) - 1] = '\0';
 
 	if (cs_path_changeWorkingPath(fullPath)) {
-		printf("no such file or directory: %s\n", cdTo);
+		fprintf(stderr, "no such file or directory: %s\n", cdTo);
 		return 1;
 	}
 
@@ -157,7 +157,7 @@ bltMkdir(int argc, const char* argv[])
 	size_t fullPathLen;
 
 	if (argc == 1) {
-		printf("%s: missing operand\n", argv[0]);
+		fprintf(stderr, "%s: missing operand\n", argv[0]);
 		return 1;
 	}
 
@@ -172,8 +172,8 @@ bltMkdir(int argc, const char* argv[])
 		strcat(fullPath, dirPath);
 
 		if (cs_path_mkdir(fullPath))
-			printf("%s: can not create directory '%s': "
-			       "File exist\n",
+			fprintf(stderr, "%s: can not create directory '%s': "
+				"File exist\n",
 			       argv[0], argv[i]);
 	}
 
@@ -192,7 +192,7 @@ cat(int argc, const char* argv[])
 	size_t strLen;
 
 	if (argc == 1) {
-		printf("%s: missing operand\n", argv[0]);
+		fprintf(stderr, "%s: missing operand\n", argv[0]);
 		return 1;
 	}
 
@@ -213,13 +213,13 @@ cat(int argc, const char* argv[])
 
 		fd = fopen(fullPath, "rb");
 		if (!fd) {
-			printf("%s: %s: No such file or directory\n",
+			fprintf(stderr, "%s: %s: No such file or directory\n",
 			       argv[0], filePath);
 			continue;
 		}
 
 		while (getline(&strBuf, &strLen, fd) != -1)
-			printf("%s", strBuf);
+			fprintf(stderr, "%s", strBuf);
 
 		free(strBuf);
 		strBuf = NULL;
@@ -243,7 +243,7 @@ bltTime(int argc, const char* argv[])
 	const char** newArgv;
 
 	if (argc == 1) {
-		printf("%s: missing operand\n", argv[0]);
+		fprintf(stderr, "%s: missing operand\n", argv[0]);
 		return 1;
 	}
 
@@ -255,9 +255,11 @@ bltTime(int argc, const char* argv[])
 	doBuiltinCmd(newArgc, newArgv);
 	stopTime = time(NULL);
 
-	printf("Start clock: %li, stop clock: %li\n", startTime, stopTime);
-	printf("%f user\n",
-	       (float) (stopTime - startTime) / (float) CLOCKS_PER_SEC);
+	fprintf(cs_pipe_getOutputStream(),
+		"Start clock: %li, stop clock: %li\n", startTime, stopTime);
+	fprintf(cs_pipe_getOutputStream(),
+		"%f user\n",
+		(float) (stopTime - startTime) / (float) CLOCKS_PER_SEC);
 
 	return 0;
 }
@@ -294,17 +296,18 @@ ls(int argc, const char* argv[])
 
 	dirp = opendir(fullPath);
 	if (!dirp) {
-		printf("%s: cannot access %s: No such file or directory\n",
-		       argv[0], targetPath);
+		fprintf(stderr,
+			"%s: cannot access %s: No such file or directory\n",
+			argv[0], targetPath);
 		return 2;
 	}
 
 	while ((ent = readdir(dirp))) {
 		if (ent->d_name[0] == '.')
 			continue;
-		printf("%s\t", ent->d_name);
+		fprintf(cs_pipe_getOutputStream(), "%s\t", ent->d_name);
 	}
-	printf("\n");
+	fprintf(cs_pipe_getOutputStream(), "\n");
 
 	closedir(dirp);
 	dirp = NULL;
@@ -326,7 +329,7 @@ du(int argc, const char* argv[])
 	struct stat st;
 
 	if (argc == 1) {
-		printf("%s: missing operand\n", argv[0]);
+		fprintf(stderr, "%s: missing operand\n", argv[0]);
 		return 1;
 	}
 
@@ -349,13 +352,14 @@ du(int argc, const char* argv[])
 			free(fullPath);
 		fullPath = NULL;
 
-		printf("%s: file or directory not exist: %s\n",
+		fprintf(stderr, "%s: file or directory not exist: %s\n",
 		       argv[0], targetPath);
 
 		return 1;
 	}
 
-	printf("%fK\t%s\n", ((float)st.st_size / 1024.0), targetPath);
+	fprintf(cs_pipe_getOutputStream(),
+		"%fK\t%s\n", ((float)st.st_size / 1024.0), targetPath);
 
 	if (fullPath != targetPath)
 		free(fullPath);
@@ -383,7 +387,8 @@ ps(int argc, const char* argv[])
 		return 1;
 	}
 
-	printf("%6s %-10s %10s %-10s\n", "PID", "TTY", "TIME", "CMD");
+	fprintf(cs_pipe_getOutputStream(),
+		"%6s %-10s %10s %-10s\n", "PID", "TTY", "TIME", "CMD");
 	while ((ent = readdir(dirp))) {
 		if (ent->d_type == DT_DIR) {
 			if (strcspn(ent->d_name, "0123456789") == 0) {
@@ -425,8 +430,9 @@ ps(int argc, const char* argv[])
 					++i;
 					tok = strtok(NULL, " ()");
 				}
-				printf("%6d %-10d %10d %-10s\n",
-				       pid, tty, utime, cmd);
+				fprintf(cs_pipe_getOutputStream(),
+					"%6d %-10d %10d %-10s\n",
+					pid, tty, utime, cmd);
 
 				free(fullPath);
 			}
@@ -463,7 +469,7 @@ bye(int argc, const char* argv[])
 static int
 hell(int argc, const char* argv[])
 {
-	printf("this is hell!!\n");
+	fprintf(cs_pipe_getOutputStream(), "this is hell!!\n");
 
 	return 0;
 }
