@@ -124,7 +124,7 @@ cs_cmdline_handleUserInput()
 
 		/* XXX gonna find out other method */
 		printf("%c[2K", 27);
-		printf("\r%s", cmdLineBuf);
+		printf("\r" KRED "$ " RESET "%s", cmdLineBuf);
 	}
 }
 
