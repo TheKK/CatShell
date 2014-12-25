@@ -24,19 +24,31 @@ CXXFLAG = -Wall -std=gnu99 -g
 OUT_DIR = ./obj
 SRC_DIR = ./src
 INC_DIR = ./include
+TEST_DIR = ./test
 
 # Source files and header files
 SRC = $(wildcard $(addsuffix /*.c, $(SRC_DIR)))
 INCLUDE = $(addprefix -I, $(INC_DIR))
 OBJ := $(addprefix $(OUT_DIR)/, $(SRC:.c=.o))
 
+TEST_SRC = $(wildcard $(addsuffix /*.c, $(TEST_DIR)))
+TEST_OBJ = $(addprefix $(OUT_DIR)/, $(TEST_SRC:.c=.o))
+TESTS = $(addprefix $(OUT_DIR)/, $(TEST_SRC:.c=))
+
 # Libs flags
-LIB = -lpthread
+LIB = -lpthread -lcmocka
 
 OUT_EXE = cs
 
 all: $(OUT_EXE)
 	@echo "===========[[Everything done!!]]============"
+
+dotest: ./obj/test/path_test
+	@$(foreach test, $^, ./$(test))
+
+./obj/test/path_test: ./obj/src/path.o ./obj/test/path_test.o
+	@echo "    LD    " $(notdir $@)
+	@$(CXX) ./obj/src/path.o ./obj/test/path_test.o $(CXXFLAG) $(LIB) -o $@
 
 $(OUT_EXE): $(OBJ)
 	@echo "    LD    " $(notdir $@)
@@ -46,6 +58,8 @@ $(OUT_DIR)/%.o: %.c
 	@echo "    CC    " $(notdir $@)
 	@mkdir -p $(dir $@)
 	@$(CXX) -c $< $(CXXFLAG) $(INCLUDE) -o $@
+
+
 
 .PHONY: clean
 clean:
