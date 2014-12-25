@@ -25,6 +25,7 @@
 #include <termios.h>
 
 #include "path.h"
+#include "color.h"
 
 static char* cmdLineBuf = NULL;
 static size_t cmdLineBufLen = 10;
@@ -34,10 +35,9 @@ static char* cmdLineBufTailPos = NULL;
 static void
 cs_cmdline_printPromote()
 {
-	printf("\n"
-	       "\x1B[1m" "\x1B[34m" "# " "\033[0m" "%s in %s\n",
+	printf("\n" KBLU "# " KCYN "%s " KWHT "in " KYEL "%s\n" RESET,
 	       getenv("USER"), cs_path_getWorkingPath());
-	printf("$ ");
+	printf(KRED "$ " RESET);
 }
 
 static void
