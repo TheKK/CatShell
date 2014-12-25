@@ -107,7 +107,9 @@ l10nInit()
 static void
 printPromote()
 {
-	printf("\n# %s in %s\n", getenv("USER"), cs_path_getWorkingPath());
+	printf("\n"
+	       "\x1B[1m" "\x1B[34m" "# " "\033[0m" "%s in %s\n",
+	       getenv("USER"), cs_path_getWorkingPath());
 	printf("$ ");
 }
 

@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
+#include <unistd.h>
 #include <sys/stat.h>
 
 #include "path.h"
@@ -28,26 +29,37 @@
 #include "sysfilesystem.h"
 
 static char* workingPath_ = NULL;
+static size_t workingPathLen_ = 100;
+
+static int
+cs_path_updateWorkingPath()
+{
+	while (getcwd(workingPath_, workingPathLen_) == NULL) {
+		workingPathLen_ *= 2;
+
+		workingPath_ = (char*) malloc(sizeof(char) * workingPathLen_);
+		if (!workingPath_) {
+			/* XXX should not put this here */
+			fprintf(stderr, "out of memory\n");
+			return -1;
+		}
+	}
+
+	return 0;
+}
 
 int
 cs_path_init()
 {
-	const char* currentPath = NULL;
-	char* ptr = NULL;
-
-	currentPath = getenv("PWD");
-	if (currentPath) {
-		size_t len;
-
-		len = strlen(currentPath) + 1;
-		ptr = (char*) malloc(sizeof(char) * len);
-		strcat(ptr, currentPath);
-	} else {
-		ptr = (char*) malloc(sizeof(char) * 2);
-		strcpy(ptr, "/");
+	workingPath_ = (char*) malloc(sizeof(char) * workingPathLen_);
+	if (!workingPath_) {
+		/* XXX should not put this here */
+		fprintf(stderr, "out of memory\n");
+		return -1;
 	}
 
-	workingPath_ = ptr;
+	if (cs_path_updateWorkingPath())
+		return -1;
 
 	return 0;
 }
@@ -55,10 +67,8 @@ cs_path_init()
 void
 cs_path_quit()
 {
-	if (workingPath_) {
-		free(workingPath_);
-		workingPath_ = NULL;
-	}
+	free(workingPath_);
+	workingPath_ = NULL;
 }
 
 const char*
@@ -70,28 +80,17 @@ cs_path_getWorkingPath()
 int
 cs_path_changeWorkingPath(const char* newPath)
 {
-	DIR* dirp;
-
-	if(!newPath)
+	if (chdir(newPath))
 		return -1;
 
-	dirp = opendir(newPath);
-	if (!dirp)
+	if (cs_path_updateWorkingPath())
 		return -1;
 
-	closedir(dirp);
-
-	workingPath_ = realloc(workingPath_, strlen(newPath) + 1);
-	strcpy(workingPath_, newPath);
-
-	return 0;
+	return chdir(newPath);
 }
 
 int
 cs_path_mkdir(const char* path)
 {
-	if (mkdir(path, 0777) == -1)
-		return -1;
-
-	return 0;
+	return mkdir(path, 0777);
 }
