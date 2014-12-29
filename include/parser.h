@@ -28,6 +28,6 @@ void cs_parser_parse(const char* cmdLine);
 const char* cs_parser_getRawUserInput();
 
 int cs_parser_getArgc();
-const char** cs_parser_getArgv();
+char** cs_parser_getArgv();
 
 #endif /* PARSER_H */

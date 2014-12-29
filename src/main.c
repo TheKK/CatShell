@@ -29,6 +29,7 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 #include "path.h"
 #include "builtInFuncs.h"
@@ -110,6 +111,39 @@ l10nInit()
 	textdomain("CatChat_client");
 }
 
+static int
+doSystemCmd(int argc, char* argv[])
+{
+	int childStatus;
+	pid_t pid, waitPid;
+
+	pid = fork();
+	if (pid == -1) {
+		printf("%s: System call fork() falied\n",
+		       argv[0]);
+		return -1;
+	}
+
+	if (!pid) {
+		execvp(cs_parser_getArgv()[0],
+		       cs_parser_getArgv());
+
+		printf("%s: Command not found\n",
+		       cs_parser_getArgv()[0]);
+	} else {
+		if ((waitPid =
+		     waitpid(pid, &childStatus, 0)) == -1) {
+
+			printf("%s: "
+			       "System call waitpid() falied\n",
+			       cs_parser_getArgv()[0]);
+			return -1;
+		}
+	}
+
+	return 0;
+}
+
 int
 main(int argc, char* argv[])
 {
@@ -118,20 +152,47 @@ main(int argc, char* argv[])
 
 	getOptions(argc, argv);
 
-	while (shellIsRunning_) {
-		cs_cmdline_handleUserInput();
+	if (argc > 1) {
+		for (int i = 0; i < argc; ++i)
+			printf("%s\n", argv[i]);
+		/*int child_status;*/
+		/*pid_t pid, wait_pid;*/
 
-		cs_parser_parse(cs_cmdline_getCmdBuf());
+		/*pid = fork();*/
 
-		if (doBuiltinCmd(cs_parser_getArgc(), cs_parser_getArgv()) == 0)
-			continue;
+		/*if (pid == -1) {*/
+			/*printf("System call fork falied\n");*/
+			/*exit(1);*/
+		/*}*/
 
-		/* Command not found return value, dunno why */
-		if (system(cs_cmdline_getCmdBuf()) != 127)
-			continue;
+		/*if (!pid) {*/
+			/*execvp(argv[1], &argv[1]);*/
+			/*printf("Command %s not found\n", argv[1]);*/
+			/*exit(2);*/
+		/*} else {*/
+			/*if ((wait_pid = waitpid(pid, &child_status, 0)) == -1) {*/
+				/*printf("System call waitpid falied\n");*/
+				/*exit(3);*/
+			/*}*/
+		/*}*/
 
-		printf("catshell: command not found: %s\n",
-		       cs_parser_getArgv()[0]);
+	} else {
+
+		while (shellIsRunning_) {
+			cs_cmdline_handleUserInput();
+
+			cs_parser_parse(cs_cmdline_getCmdBuf());
+
+			if (doBuiltinCmd(cs_parser_getArgc(),
+					 cs_parser_getArgv()) == 0)
+				continue;
+
+			if (doSystemCmd(cs_parser_getArgc(),
+					cs_parser_getArgv()) == 0)
+				continue;
+			else
+				break;
+		}
 	}
 
 	quit();

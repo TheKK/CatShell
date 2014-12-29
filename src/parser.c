@@ -28,45 +28,64 @@
 #define BUF_SIZE 50
 
 static int argc_;
+static char** rawArgv_ = NULL;
 static char** argv_ = NULL;
 static size_t argvLen_ = 2;
 
 static void
 cs_parser_enlargeArgv(size_t newSize)
 {
-	char** ptrPtr = NULL;
+	char** new_rawArgv = NULL;
+	char** new_argv = NULL;
 
 	if (newSize <= argvLen_)
 		return;
 
-	ptrPtr = (char**) malloc(sizeof(char*) * newSize);
-	if (!ptrPtr) {
+	/* rawArgv_ */
+	new_rawArgv = (char**) malloc(sizeof(char*) * newSize);
+	if (!new_rawArgv) {
 		fprintf(stderr, "Out of memory!!\n");
 		exit(1);
 	}
 
-	memcpy(ptrPtr, argv_, sizeof(char*) * argvLen_);
+	memcpy(new_rawArgv, rawArgv_, sizeof(char*) * argvLen_);
 
 	for (size_t i = argvLen_; i < newSize; ++i)
-		ptrPtr[i] = (char*) malloc(sizeof(char) * 20);
+		new_rawArgv[i] = (char*) malloc(sizeof(char) * 20);
 
+	/* argv_ */
+	new_argv = (char**) malloc(sizeof(char*) * newSize);
+	if (!new_argv) {
+		fprintf(stderr, "Out of memory!!\n");
+		exit(1);
+	}
+
+	free(rawArgv_);
 	free(argv_);
-	argv_ = ptrPtr;
+
+	rawArgv_ = new_rawArgv;
+	argv_ = new_argv;
 	argvLen_ = newSize;
 }
 
 int
 cs_parser_init()
 {
-	argv_ = (char**) malloc(sizeof(char*) * argvLen_);
-	if (!argv_) {
+	rawArgv_ = (char**) malloc(sizeof(char*) * argvLen_);
+	if (!rawArgv_) {
 		fprintf(stderr, "Out of memory!!\n");
 		return -1;
 	}
 
 	/* XXX Bad hack */
 	for (size_t i = 0; i < argvLen_; ++i)
-		argv_[i] = (char*) malloc(sizeof(char) * 20);
+		rawArgv_[i] = (char*) malloc(sizeof(char) * 20);
+
+	argv_ = (char**) malloc(sizeof(char*) * argvLen_);
+	if (!argv_) {
+		fprintf(stderr, "Out of memory!!\n");
+		return -1;
+	}
 
 	return 0;
 }
@@ -75,12 +94,16 @@ void
 cs_parser_quit()
 {
 	for (size_t i = 0; i < argvLen_; ++i) {
-		free(argv_[i]);
-		argv_[i] = NULL;
+		free(rawArgv_[i]);
+		rawArgv_[i] = NULL;
 	}
+
+	free(rawArgv_);
+	rawArgv_ = NULL;
 
 	free(argv_);
 	argv_ = NULL;
+
 	argvLen_ = 0;
 }
 
@@ -95,16 +118,16 @@ cs_parser_parse(const char* cmdLine)
 	cmdLineCopy = (char*) malloc(sizeof(char) * strlen(cmdLine) + 1);
 	strncpy(cmdLineCopy, cmdLine, strlen(cmdLine) + 1);
 
+	/* Split tokens */
 	argc_ = 0;
 	tok = strtok(cmdLineCopy, " ");
 	while (tok) {
-		/* TODO try to record size of argv_[] entries */
-		/*if (strlen(tok) > strlen(argv_[argc_])) {*/
-			/*argv_[argc_] =*/
-				/*(char*) realloc(argv_[argc_],*/
-						/*strlen(tok) + 1);*/
-		/*}*/
-		strncpy(argv_[argc_], tok, strlen(tok) + 1);
+		if (strlen(tok) > strlen(rawArgv_[argc_])) {
+			rawArgv_[argc_] =
+				(char*) realloc(rawArgv_[argc_],
+						strlen(tok) + 1);
+		}
+		strncpy(rawArgv_[argc_], tok, strlen(tok) + 1);
 
 		++argc_;
 		if (argc_ == argvLen_)
@@ -113,13 +136,18 @@ cs_parser_parse(const char* cmdLine)
 		tok = strtok(NULL, " ");
 	}
 
-	/* special keywork */
+	/* Connect ptr to rawArgv_ */
+	for (int i = 0; i < argc_; ++i)
+		argv_[i] = rawArgv_[i];
+	argv_[argc_] = NULL;
+
+	/* Handle special keywork */
 	originArgc = argc_;
 	for (int i = 0; i < originArgc; ++i) {
 		if (strstr(argv_[i], ">")) {
 			FILE* fd = NULL;
 
-			fd = fopen(argv_[i +1], "wb");
+			fd = fopen(argv_[i + 1], "wb");
 			cs_pipe_setOutputStream(fd);
 
 			argc_ -= 2;
@@ -147,8 +175,8 @@ cs_parser_getArgc()
 	return argc_;
 }
 
-const char**
+char**
 cs_parser_getArgv()
 {
-	return (const char**) argv_;
+	return argv_;
 }

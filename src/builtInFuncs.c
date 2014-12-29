@@ -475,7 +475,7 @@ hell(int argc, const char* argv[])
 }
 
 int
-doBuiltinCmd(int argc, const char** argv)
+doBuiltinCmd(int argc, char** argv)
 {
 	static int  builtinCmdNum = sizeof(builtins) / sizeof(struct builtin);
 	const char* cmdName = NULL;

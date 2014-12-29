@@ -22,6 +22,6 @@
 
 #define BLTCMD_NOT_FOUND 2525
 
-int doBuiltinCmd(int argc, const char** argv);
+int doBuiltinCmd(int argc, char** argv);
 
 #endif /* BUILTIN_FUNCS_H */
