@@ -158,30 +158,44 @@ main(int argc, char* argv[])
 	getOptions(argc, argv);
 
 	if (argc > 1) {
-		for (int i = 0; i < argc; ++i)
-			printf("%s\n", argv[i]);
-		/*int child_status;*/
-		/*pid_t pid, wait_pid;*/
+		FILE* fd = NULL;
+		char* lineBuf = NULL;
+		size_t lineLen = 0;
 
-		/*pid = fork();*/
+		fd = fopen(argv[1], "rb");
+		if (!fd) {
+			fprintf(stderr, "%s: File %s not found\n",
+				argv[0], argv[1]);
+			exit(1);
+		}
 
-		/*if (pid == -1) {*/
-			/*printf("System call fork falied\n");*/
-			/*exit(1);*/
-		/*}*/
+		while (getline(&lineBuf, &lineLen, fd) != -1) {
+			if (lineBuf[0] == '#')
+				continue;
 
-		/*if (!pid) {*/
-			/*execvp(argv[1], &argv[1]);*/
-			/*printf("Command %s not found\n", argv[1]);*/
-			/*exit(2);*/
-		/*} else {*/
-			/*if ((wait_pid = waitpid(pid, &child_status, 0)) == -1) {*/
-				/*printf("System call waitpid falied\n");*/
-				/*exit(3);*/
-			/*}*/
-		/*}*/
+			if (lineBuf[strlen(lineBuf) - 1] == '\n')
+				lineBuf[strlen(lineBuf) - 1] = '\0';
 
-	} else {
+			if (strlen(lineBuf) == 0)
+				continue;
+
+			cs_parser_parse(lineBuf);
+
+			if (doBuiltinCmd(cs_parser_getArgc(),
+					 cs_parser_getArgv()) == 0)
+				continue;
+
+			doSystemCmd(cs_parser_getArgc(),
+				    cs_parser_getArgv());
+		}
+
+		free(lineBuf);
+		lineBuf = NULL;
+
+		fclose(fd);
+		fd = NULL;
+
+	} else if (argc == 1) {
 
 		while (shellIsRunning_) {
 			cs_cmdline_handleUserInput();
@@ -192,11 +206,8 @@ main(int argc, char* argv[])
 					 cs_parser_getArgv()) == 0)
 				continue;
 
-			if (doSystemCmd(cs_parser_getArgc(),
-					cs_parser_getArgv()) == 0)
-				continue;
-			else
-				break;
+			doSystemCmd(cs_parser_getArgc(),
+				    cs_parser_getArgv());
 		}
 	}
 

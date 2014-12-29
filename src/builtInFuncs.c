@@ -252,7 +252,7 @@ bltTime(int argc, const char* argv[])
 
 	/* XXX Is this way okay? */
 	startTime = time(NULL);
-	doBuiltinCmd(newArgc, newArgv);
+	doBuiltinCmd(newArgc, (char**) newArgv);
 	stopTime = time(NULL);
 
 	fprintf(cs_pipe_getOutputStream(),
@@ -488,7 +488,7 @@ doBuiltinCmd(int argc, char** argv)
 	for (int i = 0; i < builtinCmdNum; i++) {
 		if (strcmp(cmdName, builtins[i].name) == 0) {
 			/* TODO add cs_state or something */
-			builtins[i].cmd(argc, argv);
+			builtins[i].cmd(argc, (const char**) argv);
 			return 0;
 		}
 	}
