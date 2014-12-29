@@ -132,6 +132,7 @@ doSystemCmd(int argc, char* argv[])
 
 		printf("%s: Command not found\n",
 		       cs_parser_getArgv()[0]);
+		exit(127);
 	} else {
 		if ((waitPid =
 		     waitpid(pid, &childStatus, 0)) == -1) {

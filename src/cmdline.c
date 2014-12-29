@@ -125,6 +125,13 @@ cs_cmdline_handleUserInput()
 			printf("\n");
 			return;
 		default:
+			if (!(
+					((c >= 0) && (c <= 9)) ||
+					((c >= 'a') && (c <= 'z')) ||
+					((c >= 'A') && (c <= 'Z')))
+			)
+				break;
+
 			if (cmdLineBufCurPos == cmdLineBufTailPos) 
 				cs_cmdline_enlargeCmdLineBuf(cmdLineBufLen * 2);
 
