@@ -26,5 +26,8 @@
 int cs_cmdline_init();
 void cs_cmdline_quit();
 
+void cs_cmdline_enableEcho();
+void cs_cmdline_disableEcho();
+
 void cs_cmdline_handleUserInput();
 const char* cs_cmdline_getCmdBuf();

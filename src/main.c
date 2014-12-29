@@ -117,6 +117,8 @@ doSystemCmd(int argc, char* argv[])
 	int childStatus;
 	pid_t pid, waitPid;
 
+	cs_cmdline_disableEcho();
+
 	pid = fork();
 	if (pid == -1) {
 		printf("%s: System call fork() falied\n",
@@ -140,6 +142,8 @@ doSystemCmd(int argc, char* argv[])
 			return -1;
 		}
 	}
+
+	cs_cmdline_enableEcho();
 
 	return 0;
 }

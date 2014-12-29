@@ -31,6 +31,8 @@ static char* cmdLineBuf = NULL;
 static size_t cmdLineBufLen = 10;
 static char* cmdLineBufCurPos = NULL;
 static char* cmdLineBufTailPos = NULL;
+static struct termios oldt_, newt_;
+
 
 static void
 cs_cmdline_printPromote()
@@ -64,8 +66,6 @@ cs_cmdline_enlargeCmdLineBuf(size_t newSize)
 int
 cs_cmdline_init()
 {
-	struct termios oldt, newt;
-
 	cmdLineBuf = (char*) malloc(sizeof(char) * cmdLineBufLen);
 	if (!cmdLineBuf) {
 		return -1;
@@ -74,10 +74,10 @@ cs_cmdline_init()
 	cmdLineBufCurPos = cmdLineBuf;
 	cmdLineBufTailPos = cmdLineBuf + cmdLineBufLen - 1;
 
-	tcgetattr(STDIN_FILENO, &oldt);
-	newt = oldt;
-	newt.c_lflag &= !ECHO;
-	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+	tcgetattr(STDIN_FILENO, &oldt_);
+	newt_ = oldt_;
+	newt_.c_lflag &= !ECHO;
+	tcsetattr(STDIN_FILENO, TCSANOW, &newt_);
 
 	return 0;
 }
@@ -87,6 +87,18 @@ cs_cmdline_quit()
 {
 	free(cmdLineBuf);
 	cmdLineBuf = NULL;
+}
+
+void
+cs_cmdline_enableEcho()
+{
+	tcsetattr(STDIN_FILENO, TCSANOW, &newt_);
+}
+
+void
+cs_cmdline_disableEcho()
+{
+	tcsetattr(STDIN_FILENO, TCSANOW, &oldt_);
 }
 
 void
