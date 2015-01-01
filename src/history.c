@@ -44,6 +44,7 @@ cs_history_getHistoryLine(int targetLine)
 
 		if (currentLine == targetLine) {
 			getline(&historyCmdBuf, &historyCmdBufLen, historyFd);
+			historyCmdBuf[strlen(historyCmdBuf) - 1] = '\0';
 			return;
 		}
 
@@ -64,7 +65,7 @@ cs_history_init()
 			++totalHistoryLine;
 	}
 
-	currentHistoryLine = 1;
+	currentHistoryLine = totalHistoryLine;
 
 	return 0;
 }
@@ -87,6 +88,7 @@ cs_history_addNewHistory(char* const cmd)
 	int result;
 
 	++totalHistoryLine;
+	currentHistoryLine = totalHistoryLine;
 
 	fseek(historyFd, 0L, SEEK_END);
 
@@ -108,10 +110,10 @@ cs_history_addNewHistory(char* const cmd)
 char* const
 cs_history_getPrevHistory()
 {
-	if (currentHistoryLine != 1) {
+	cs_history_getHistoryLine(currentHistoryLine);
+
+	if (currentHistoryLine != 1)
 		--currentHistoryLine;
-		cs_history_getHistoryLine(currentHistoryLine);
-	}
 
 	return historyCmdBuf;
 }
@@ -119,10 +121,10 @@ cs_history_getPrevHistory()
 char* const
 cs_history_getNextHistory()
 {
-	if (currentHistoryLine != totalHistoryLine) {
+	cs_history_getHistoryLine(currentHistoryLine);
+
+	if (currentHistoryLine != totalHistoryLine)
 		++currentHistoryLine;
-		cs_history_getHistoryLine(currentHistoryLine);
-	}
 
 	return historyCmdBuf;
 }
