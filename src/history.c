@@ -83,6 +83,15 @@ cs_history_quit()
 }
 
 void
+cs_history_showAllHistory()
+{
+	fseek(historyFd, 0L, SEEK_SET);
+
+	while (getline(&historyCmdBuf, &historyCmdBufLen, historyFd) != -1)
+		printf("%s", historyCmdBuf);
+}
+
+void
 cs_history_addNewHistory(char* const cmd)
 {
 	int result;

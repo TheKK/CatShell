@@ -27,6 +27,7 @@
 
 #include "path.h"
 #include "pipe.h"
+#include "history.h"
 
 #include "builtInFuncs.h"
 
@@ -46,6 +47,7 @@ static int bltTime(int argc, const char* argv[]);
 static int ls(int argc, const char* argv[]);
 static int du(int argc, const char* argv[]);
 static int ps(int argc, const char* argv[]);
+static int history(int argc, const char* argv[]);
 static int help(int argc, const char* argv[]);
 
 static int bye(int argc, const char* argv[]);
@@ -71,6 +73,7 @@ static struct builtin builtins[] = {
 	BUILTIN(du),
 	BUILTIN(ps),
 	BUILTIN(help),
+	BUILTIN(history),
 	BUILTIN(bye),
 	BUILTIN(hell)
 };
@@ -441,6 +444,14 @@ ps(int argc, const char* argv[])
 
 	closedir(dirp);
 	dirp = NULL;
+
+	return 0;
+}
+
+static int
+history(int argc, const char* argv[])
+{
+	cs_history_showAllHistory();
 
 	return 0;
 }

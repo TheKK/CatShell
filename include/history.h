@@ -23,6 +23,8 @@
 int cs_history_init();
 void cs_history_quit();
 
+void cs_history_showAllHistory();
+
 void cs_history_addNewHistory(char* const cmd);
 
 char* const cs_history_getPrevHistory();
