@@ -23,8 +23,10 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <termios.h>
+#include <string.h>
 
 #include "path.h"
+#include "history.h"
 #include "color.h"
 
 static char* cmdLineBuf = NULL;
@@ -32,7 +34,6 @@ static size_t cmdLineBufLen = 10;
 static char* cmdLineBufCurPos = NULL;
 static char* cmdLineBufTailPos = NULL;
 static struct termios oldt_, newt_;
-
 
 static void
 cs_cmdline_printPromote()
@@ -105,6 +106,7 @@ void
 cs_cmdline_handleUserInput()
 {
 	int c;
+	const char* historyCmd = NULL;
 
 	cmdLineBufCurPos = cmdLineBuf;
 	*cmdLineBufCurPos = '\0';
@@ -123,7 +125,25 @@ cs_cmdline_handleUserInput()
 			break;
 		case CS_KEY_RETURN:
 			printf("\n");
+
+			cs_history_addNewHistory(cmdLineBuf);
 			return;
+		case 16: /* C-p */
+			historyCmd = cs_history_getPrevHistory();
+			if (strlen(historyCmd) > cmdLineBufLen) {
+				cs_cmdline_enlargeCmdLineBuf(cmdLineBufLen * 2);
+			}
+
+			strcpy(cmdLineBuf, historyCmd);
+			break;
+		case 14: /* C-n */
+			historyCmd = cs_history_getNextHistory();
+			if (strlen(historyCmd) > cmdLineBufLen) {
+				cs_cmdline_enlargeCmdLineBuf(cmdLineBufLen * 2);
+			}
+
+			strcpy(cmdLineBuf, historyCmd);
+			break;
 		default:
 			if (!(
 					((c >= '0') && (c <= '9')) ||

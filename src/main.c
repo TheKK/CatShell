@@ -37,6 +37,7 @@
 #include "pipe.h"
 #include "parser.h"
 #include "cmdline.h"
+#include "history.h"
 
 #define _(STRING) gettext(STRING)
 
@@ -92,6 +93,8 @@ init()
 	if (cs_cmdline_init())
 		exit(1);
 
+	if (cs_history_init())
+		exit(1);
 }
 
 static void
@@ -101,6 +104,7 @@ quit()
 	cs_pipe_quit();
 	cs_parser_quit();
 	cs_cmdline_quit();
+	cs_history_quit();
 }
 
 static void
