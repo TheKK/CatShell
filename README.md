@@ -6,7 +6,7 @@
 
 ## Introduction
 
-Stupid homework, but write it smart
+Stupid homework, but I wrote it smart
 
 Basically, this is just a simple shell with few [feature](#feature).
 
@@ -14,13 +14,13 @@ Basically, this is just a simple shell with few [feature](#feature).
 
 - help command
 - modualize architeture
-- l0n
+- l10n
 - unit test(partly)
 - command history
 - can run simple shell script(only command, no variable or loops)
 - it's usable shell! but not user-friendly
-- Color promote
-- Cat logo
+- color promote
+- cat logo
 
 ## Goal that not reach
 
@@ -47,3 +47,7 @@ USA
 ## Authors
 
 * TheKK [thumbd03803@gmail.com](mailto:thumbd03803@gmail.com)
+
+## Special thank
+
+Promote theme inspired by [ys](http://blog.ysmood.org/my-ys-terminal-theme/).
