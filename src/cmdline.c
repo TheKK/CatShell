@@ -128,7 +128,7 @@ cs_cmdline_handleUserInput()
 
 			cs_history_addNewHistory(cmdLineBuf);
 			return;
-		case 16: /* C-p */
+		case CS_KEY_CTLP:
 			historyCmd = cs_history_getPrevHistory();
 			if (strlen(historyCmd) > cmdLineBufLen) {
 				cs_cmdline_enlargeCmdLineBuf(cmdLineBufLen * 2);
@@ -136,7 +136,7 @@ cs_cmdline_handleUserInput()
 
 			strcpy(cmdLineBuf, historyCmd);
 			break;
-		case 14: /* C-n */
+		case CS_KEY_CTLN:
 			historyCmd = cs_history_getNextHistory();
 			if (strlen(historyCmd) > cmdLineBufLen) {
 				cs_cmdline_enlargeCmdLineBuf(cmdLineBufLen * 2);
@@ -153,7 +153,7 @@ cs_cmdline_handleUserInput()
 			)
 				break;
 
-			if (cmdLineBufCurPos == cmdLineBufTailPos) 
+			if (cmdLineBufCurPos == cmdLineBufTailPos)
 				cs_cmdline_enlargeCmdLineBuf(cmdLineBufLen * 2);
 
 			*cmdLineBufCurPos = c;
