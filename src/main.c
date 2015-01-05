@@ -63,12 +63,12 @@ getOptions(int argc, char* argv[])
 		switch (opt) {
 		case 'v':
 			showVersion();
+			exit(0);
 		case 'h':
 		case '?':
 		default:
 			showHelp();
 			exit(0);
-			break;
 		}
 	}
 }
@@ -150,10 +150,11 @@ doSystemCmd(int argc, char* argv[])
 int
 main(int argc, char* argv[])
 {
-	init();
 	l10nInit();
 
 	getOptions(argc, argv);
+
+	init();
 
 	if (argc > 1) { /* Script mode */
 		FILE* fd = NULL;
