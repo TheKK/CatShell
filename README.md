@@ -6,11 +6,9 @@
 
 ## Introduction
 
-builtin functions:
-ps, ls, cat, pwd, echo, date, time, du, mkdir, cd, >, cs(call yourself)
+Stupid homework, but write it smart
 
-external functions:
-you name it
+Basically, this is just a simple shell with few [feature](#feature).
 
 ## Feature
 
@@ -27,7 +25,7 @@ you name it
 ## Goal that not reach
 
 - Learn how to use hashtable to boost search speed
-- Linux env var problem
+- GNU/Linux env var problem
 
 ## License
 
