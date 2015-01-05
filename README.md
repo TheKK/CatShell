@@ -6,7 +6,28 @@
 
 ## Introduction
 
-Comming soon
+builtin functions:
+ps, ls, cat, pwd, echo, date, time, du, mkdir, cd, >, cs(call yourself)
+
+external functions:
+you name it
+
+## Feature
+
+- help command
+- modualize architeture
+- l0n
+- unit test(partly)
+- command history
+- can run simple shell script(only command, no variable or loops)
+- it's usable shell! but not user-friendly
+- Color promote
+- Cat logo
+
+## Goal that not reach
+
+- Learn how to use hashtable to boost search speed
+- Linux env var problem
 
 ## License
 
@@ -20,7 +41,7 @@ WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
-You should have received a copy of the [GNU General Public License](docs/licenses/GPL.txt)
+You should have received a copy of the [GNU General Public License](LICENSE)
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 USA
