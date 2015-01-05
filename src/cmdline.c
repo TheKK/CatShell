@@ -36,6 +36,13 @@ static char* cmdLineBufTailPos = NULL;
 static struct termios oldt_, newt_;
 
 static void
+cs_cmdline_setupCursorPos()
+{
+	cmdLineBufCurPos = cmdLineBuf + strlen(cmdLineBuf);
+	cmdLineBufTailPos = cmdLineBuf + cmdLineBufLen - 1;
+}
+
+static void
 cs_cmdline_printPromote()
 {
 	printf("\n" KBLU "# " KCYN "%s " KWHT "in " KYEL "%s\n" RESET,
@@ -46,12 +53,8 @@ cs_cmdline_printPromote()
 static void
 cs_cmdline_enlargeCmdLineBuf(size_t newSize)
 {
-	int offset;
-
 	if (newSize <= cmdLineBufLen)
 		return;
-
-	offset = cmdLineBufCurPos - cmdLineBuf;
 
 	cmdLineBuf = (char*) realloc(cmdLineBuf, newSize);
 	if (!cmdLineBuf) {
@@ -60,8 +63,8 @@ cs_cmdline_enlargeCmdLineBuf(size_t newSize)
 	}
 
 	cmdLineBufLen = newSize;
-	cmdLineBufCurPos = cmdLineBuf + offset;
-	cmdLineBufTailPos = cmdLineBuf + cmdLineBufLen - 1;
+
+	cs_cmdline_setupCursorPos();
 }
 
 int
@@ -125,24 +128,23 @@ cs_cmdline_handleUserInput()
 			break;
 		case CS_KEY_RETURN:
 			printf("\n");
-
 			cs_history_addNewHistory(cmdLineBuf);
 			return;
 		case CS_KEY_CTLP:
 			historyCmd = cs_history_getPrevHistory();
-			if (strlen(historyCmd) > cmdLineBufLen) {
+			if (strlen(historyCmd) > cmdLineBufLen)
 				cs_cmdline_enlargeCmdLineBuf(cmdLineBufLen * 2);
-			}
 
 			strcpy(cmdLineBuf, historyCmd);
+			cs_cmdline_setupCursorPos();
 			break;
 		case CS_KEY_CTLN:
 			historyCmd = cs_history_getNextHistory();
-			if (strlen(historyCmd) > cmdLineBufLen) {
+			if (strlen(historyCmd) > cmdLineBufLen)
 				cs_cmdline_enlargeCmdLineBuf(cmdLineBufLen * 2);
-			}
 
 			strcpy(cmdLineBuf, historyCmd);
+			cs_cmdline_setupCursorPos();
 			break;
 		default:
 			if (!(
