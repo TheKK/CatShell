@@ -21,15 +21,18 @@ CXX = gcc
 CXXFLAG = -Wall -std=gnu99 -g
 
 # Direcotries
-OUT_DIR = ./obj
-SRC_DIR = ./src
-INC_DIR = ./include
-TEST_DIR = ./test
+OUT_DIR = obj
+SRC_DIR = src
+INC_DIR = include
+TEST_DIR = test
 
 # Source files and header files
 SRC = $(wildcard $(addsuffix /*.c, $(SRC_DIR)))
 INCLUDE = $(addprefix -I, $(INC_DIR))
 OBJ := $(addprefix $(OUT_DIR)/, $(SRC:.c=.o))
+OBJ := $(filter-out $(OUT_DIR)/$(SRC_DIR)/main.o, $(OBJ))
+
+MAIN_OBJ = $(OUT_DIR)/$(SRC_DIR)/main.o
 
 TEST_SRC = $(wildcard $(addsuffix /*.c, $(TEST_DIR)))
 TEST_OBJ = $(addprefix $(OUT_DIR)/, $(TEST_SRC:.c=.o))
@@ -43,16 +46,18 @@ OUT_EXE = cs
 all: $(OUT_EXE)
 	@echo "===========[[Everything done!!]]============"
 
-dotest: ./obj/test/path_test
-	@$(foreach test, $^, ./$(test))
+dotest: $(TESTS)
+	@echo "===========[[Start test]]============"
+	@$(foreach test, $^, echo [$(notdir $(test))]; ./$(test); echo;)
+	@echo "===========[[Test all done]]============"
 
-./obj/test/path_test: ./obj/src/path.o ./obj/test/path_test.o
+$(OUT_EXE): $(OBJ) $(MAIN_OBJ)
 	@echo "    LD    " $(notdir $@)
-	@$(CXX) ./obj/src/path.o ./obj/test/path_test.o $(CXXFLAG) $(LIB) -o $@
+	@$(CXX) $^ $(CXXFLAG) $(LIB) -o $@
 
-$(OUT_EXE): $(OBJ)
+$(OUT_DIR)/$(TEST_DIR)/%: $(OBJ) $(OUT_DIR)/$(TEST_DIR)/%.o
 	@echo "    LD    " $(notdir $@)
-	@$(CXX) $(OBJ) $(CXXFLAG) $(LIB) -o $@
+	@$(CXX) $^ $(CXXFLAG) $(INCLUDE) $(LIB) -o $@
 
 $(OUT_DIR)/%.o: %.c
 	@echo "    CC    " $(notdir $@)

@@ -10,7 +10,7 @@
 static void
 setup_system(void** state)
 {
-	assert_true(cs_path_init() == 0);
+	assert_return_code(cs_path_init(), 1);
 }
 
 static void
@@ -40,7 +40,7 @@ static void
 test_cs_path_changeWorkingPath(void** state)
 {
 	const char path1[] = "/proc";
-	const char path2[] = "/vvvvvvv";
+	const char path2[] = "/vvvvvvsdjfkdssdjkv";
 
 	assert_int_equal(cs_path_changeWorkingPath(path1), 0);
 	assert_string_equal(cs_path_getWorkingPath(), path1);
@@ -53,11 +53,11 @@ int
 main(int argc, char* argv[])
 {
 	const UnitTest tests[] = {
-		unit_test_setup_teardown(test_cs_path_getWorkingPath,
-					 setup_system, cleanup_system),
-		unit_test_setup_teardown(test_cs_path_changeWorkingPath,
-					 setup_system, cleanup_system)
+		group_test_setup(setup_system),
+		unit_test(test_cs_path_getWorkingPath),
+		unit_test(test_cs_path_changeWorkingPath),
+		group_test_teardown(cleanup_system)
 	};
 
-	return run_tests(tests);
+	return run_group_tests(tests);
 }

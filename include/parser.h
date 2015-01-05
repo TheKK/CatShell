@@ -25,8 +25,6 @@ void cs_parser_quit();
 
 void cs_parser_parse(const char* cmdLine);
 
-const char* cs_parser_getRawUserInput();
-
 int cs_parser_getArgc();
 char** cs_parser_getArgv();
 
