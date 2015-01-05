@@ -22,11 +22,15 @@
 #include <string.h>
 #include <dirent.h>
 #include <unistd.h>
+#include <libintl.h>
+#include <locale.h>
 #include <sys/stat.h>
 
 #include "path.h"
 
 #include "sysfilesystem.h"
+
+#define _(STRING) gettext(STRING)
 
 static char* workingPath_ = NULL;
 static size_t workingPathLen_ = 100;
@@ -40,7 +44,7 @@ cs_path_updateWorkingPath()
 		workingPath_ = (char*) malloc(sizeof(char) * workingPathLen_);
 		if (!workingPath_) {
 			/* XXX should not put this here */
-			fprintf(stderr, "out of memory\n");
+			fprintf(stderr, _("out of memory\n"));
 			return -1;
 		}
 	}
@@ -54,7 +58,7 @@ cs_path_init()
 	workingPath_ = (char*) malloc(sizeof(char) * workingPathLen_);
 	if (!workingPath_) {
 		/* XXX should not put this here */
-		fprintf(stderr, "out of memory\n");
+		fprintf(stderr, _("out of memory\n"));
 		return -1;
 	}
 

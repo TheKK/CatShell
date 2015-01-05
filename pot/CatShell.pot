@@ -1,0 +1,139 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-01-05 11:32+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/sysfilesystem.c:51 src/cmdline.c:65
+#, c-format
+msgid "Out of memory\n"
+msgstr ""
+
+#: src/path.c:47 src/path.c:61
+#, c-format
+msgid "out of memory\n"
+msgstr ""
+
+#: src/parser.c:51 src/parser.c:63 src/parser.c:80 src/parser.c:90
+#, c-format
+msgid "Out of memory!!\n"
+msgstr ""
+
+#: src/main.c:48
+#, c-format
+msgid "CatShell (OS homework) 0.25\n"
+msgstr ""
+
+#: src/main.c:54
+#, c-format
+msgid "CatShell usage: [-v version][-h help]\n"
+msgstr ""
+
+#: src/main.c:123
+#, c-format
+msgid "%s: System call fork() falied\n"
+msgstr ""
+
+#: src/main.c:132
+#, c-format
+msgid "%s: Command not found\n"
+msgstr ""
+
+#: src/main.c:139
+#, c-format
+msgid "%s: System call waitpid() falied\n"
+msgstr ""
+
+#: src/main.c:165
+#, c-format
+msgid "%s: File %s not found\n"
+msgstr ""
+
+#: src/builtInFuncs.c:146
+#, c-format
+msgid "no such file or directory: %s\n"
+msgstr ""
+
+#: src/builtInFuncs.c:165 src/builtInFuncs.c:200 src/builtInFuncs.c:252
+#: src/builtInFuncs.c:338
+#, c-format
+msgid "%s: missing operand\n"
+msgstr ""
+
+#: src/builtInFuncs.c:180
+#, c-format
+msgid "%s: can not create directory '%s': File exist\n"
+msgstr ""
+
+#: src/builtInFuncs.c:222
+#, c-format
+msgid "%s: %s: No such file or directory\n"
+msgstr ""
+
+#: src/builtInFuncs.c:265
+#, c-format
+msgid "Start clock: %li, stop clock: %li\n"
+msgstr ""
+
+#: src/builtInFuncs.c:267
+#, c-format
+msgid "%f user\n"
+msgstr ""
+
+#: src/builtInFuncs.c:306
+#, c-format
+msgid "%s: cannot access %s: No such file or directory\n"
+msgstr ""
+
+#: src/builtInFuncs.c:361
+#, c-format
+msgid "%s: file or directory not exist: %s\n"
+msgstr ""
+
+#: src/builtInFuncs.c:368
+#, c-format
+msgid "%fK\t%s\n"
+msgstr ""
+
+#: src/builtInFuncs.c:391
+#, c-format
+msgid "sorry, but Linux only\n"
+msgstr ""
+
+#: src/builtInFuncs.c:412
+#, c-format
+msgid "this should not happend\n"
+msgstr ""
+
+#: src/builtInFuncs.c:468
+#, c-format
+msgid "Avaliable builtin command:\n"
+msgstr ""
+
+#: src/builtInFuncs.c:486
+#, c-format
+msgid "this is hell!!\n"
+msgstr ""
+
+#: src/history.c:110 src/history.c:117
+#, c-format
+msgid "Error: this should not happend\n"
+msgstr ""
+
+#: src/history.c:111 src/history.c:118
+#, c-format
+msgid "Write histroy falied!\n"
+msgstr ""

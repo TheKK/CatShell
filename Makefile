@@ -59,9 +59,11 @@ $(OUT_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
 	@$(CXX) -c $< $(CXXFLAG) $(INCLUDE) -o $@
 
-
-
-.PHONY: clean
+.PHONY: clean pot
 clean:
-	@rm -frv $(OBJ)
+	@rm -frv $(OUT_DIR)/*
 	@echo "===========[[Everything removed!!]]============"
+
+pot:
+	@xgettext $(SRC) -k_ -o ./pot/CatShell.pot
+	@echo "===========[[POT file created!!]]============"

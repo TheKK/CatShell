@@ -1,0 +1,140 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-01-05 11:32+0800\n"
+"PO-Revision-Date: 2015-01-05 11:45+0800\n"
+"Last-Translator: Ying-Ruei Liang  <thumbd03803@gmail.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.7.1\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: zh_TW\n"
+
+#: src/sysfilesystem.c:51 src/cmdline.c:65
+#, c-format
+msgid "Out of memory\n"
+msgstr "記憶體不足\n"
+
+#: src/path.c:47 src/path.c:61
+#, c-format
+msgid "out of memory\n"
+msgstr "記憶體不足\n"
+
+#: src/parser.c:51 src/parser.c:63 src/parser.c:80 src/parser.c:90
+#, c-format
+msgid "Out of memory!!\n"
+msgstr "記憶體不足\n"
+
+#: src/main.c:48
+#, c-format
+msgid "CatShell (OS homework) 0.25\n"
+msgstr "貓殼（作業系統作業） 0.25\n"
+
+#: src/main.c:54
+#, c-format
+msgid "CatShell usage: [-v version][-h help]\n"
+msgstr "貓殼 用法：[-v 版本][-h 幫助]\n"
+
+#: src/main.c:123
+#, c-format
+msgid "%s: System call fork() falied\n"
+msgstr "%s：系統呼叫 fork() 失敗\n"
+
+#: src/main.c:132
+#, c-format
+msgid "%s: Command not found\n"
+msgstr "%s：查無該指令\n"
+
+#: src/main.c:139
+#, c-format
+msgid "%s: System call waitpid() falied\n"
+msgstr "%s：系統呼叫 waitpid() 失敗\n"
+
+#: src/main.c:165
+#, c-format
+msgid "%s: File %s not found\n"
+msgstr "%s： 找不到檔案 %s\n"
+
+#: src/builtInFuncs.c:146
+#, c-format
+msgid "no such file or directory: %s\n"
+msgstr "無此檔案或目錄：%s\n"
+
+#: src/builtInFuncs.c:165 src/builtInFuncs.c:200 src/builtInFuncs.c:252
+#: src/builtInFuncs.c:338
+#, c-format
+msgid "%s: missing operand\n"
+msgstr "%s： 缺少參數\n"
+
+#: src/builtInFuncs.c:180
+#, c-format
+msgid "%s: can not create directory '%s': File exist\n"
+msgstr "%s：無法建立目錄 '%s'：檔案已存在\n"
+
+#: src/builtInFuncs.c:222
+#, c-format
+msgid "%s: %s: No such file or directory\n"
+msgstr "%s：%s：無此檔案或路徑\n"
+
+#: src/builtInFuncs.c:265
+#, c-format
+msgid "Start clock: %li, stop clock: %li\n"
+msgstr "起始時間：%li，停止時間：%li\n"
+
+#: src/builtInFuncs.c:267
+#, c-format
+msgid "%f user\n"
+msgstr "%f使用者\n"
+
+#: src/builtInFuncs.c:306
+#, c-format
+msgid "%s: cannot access %s: No such file or directory\n"
+msgstr "%s：無法存取 %s：沒有該檔案或目錄\n"
+
+#: src/builtInFuncs.c:361
+#, c-format
+msgid "%s: file or directory not exist: %s\n"
+msgstr "%s：檔案或目錄不存在：%s\n"
+
+#: src/builtInFuncs.c:368
+#, c-format
+msgid "%fK\t%s\n"
+msgstr "%fK\t%s\n"
+
+#: src/builtInFuncs.c:391
+#, c-format
+msgid "sorry, but Linux only\n"
+msgstr "抱歉，只給 Linux 使用\n"
+
+#: src/builtInFuncs.c:412
+#, c-format
+msgid "this should not happend\n"
+msgstr "這不該發生\n"
+
+#: src/builtInFuncs.c:468
+#, c-format
+msgid "Avaliable builtin command:\n"
+msgstr "可取得的內建指令：\n"
+
+#: src/builtInFuncs.c:486
+#, c-format
+msgid "this is hell!!\n"
+msgstr "這裏是地獄！！\n"
+
+#: src/history.c:110 src/history.c:117
+#, c-format
+msgid "Error: this should not happend\n"
+msgstr "錯誤：這不該發生\n"
+
+#: src/history.c:111 src/history.c:118
+#, c-format
+msgid "Write histroy falied!\n"
+msgstr "歷史寫入失敗！\n"

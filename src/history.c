@@ -22,6 +22,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <libintl.h>
+#include <locale.h>
+
+#define _(STRING) gettext(STRING)
 
 static FILE* historyFd = NULL;
 static char* historyCmdBuf = NULL;
@@ -103,15 +107,15 @@ cs_history_addNewHistory(char* const cmd)
 
 	result = fputs(cmd, historyFd);
 	if (result == EOF) {
-		fprintf(stderr, "Error: this should not happend\n");
-		fprintf(stderr, "Write histroy falied!\n");
+		fprintf(stderr, _("Error: this should not happend\n"));
+		fprintf(stderr, _("Write histroy falied!\n"));
 		exit(1);
 	}
 
 	result = fputc('\n', historyFd);
 	if (result == EOF) {
-		fprintf(stderr, "Error: this should not happend\n");
-		fprintf(stderr, "Write histroy falied!\n");
+		fprintf(stderr, _("Error: this should not happend\n"));
+		fprintf(stderr, _("Write histroy falied!\n"));
 		exit(1);
 	}
 }

@@ -106,8 +106,8 @@ static void
 l10nInit()
 {
 	setlocale(LC_ALL, "");
-	bindtextdomain("CatChat_client", "po");
-	textdomain("CatChat_client");
+	bindtextdomain("CatShell", "po");
+	textdomain("CatShell");
 }
 
 static int
@@ -120,7 +120,7 @@ doSystemCmd(int argc, char* argv[])
 
 	pid = fork();
 	if (pid == -1) {
-		printf("%s: System call fork() falied\n",
+		printf(_("%s: System call fork() falied\n"),
 		       argv[0]);
 		return -1;
 	}
@@ -129,15 +129,14 @@ doSystemCmd(int argc, char* argv[])
 		execvp(cs_parser_getArgv()[0],
 		       cs_parser_getArgv());
 
-		printf("%s: Command not found\n",
+		printf(_("%s: Command not found\n"),
 		       cs_parser_getArgv()[0]);
 		exit(127);
 	} else {
 		if ((waitPid =
 		     waitpid(pid, &childStatus, 0)) == -1) {
 
-			printf("%s: "
-			       "System call waitpid() falied\n",
+			printf(_("%s: System call waitpid() falied\n"),
 			       cs_parser_getArgv()[0]);
 			return -1;
 		}
@@ -163,7 +162,7 @@ main(int argc, char* argv[])
 
 		fd = fopen(argv[1], "rb");
 		if (!fd) {
-			fprintf(stderr, "%s: File %s not found\n",
+			fprintf(stderr, _("%s: File %s not found\n"),
 				argv[0], argv[1]);
 			exit(1);
 		}

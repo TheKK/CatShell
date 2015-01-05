@@ -22,10 +22,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <libintl.h>
+#include <locale.h>
 
 #include "pipe.h"
 
 #define BUF_SIZE 50
+
+#define _(STRING) gettext(STRING)
 
 static int argc_;
 static char** rawArgv_ = NULL;
@@ -44,7 +48,7 @@ cs_parser_enlargeArgv(size_t newSize)
 	/* rawArgv_ */
 	new_rawArgv = (char**) malloc(sizeof(char*) * newSize);
 	if (!new_rawArgv) {
-		fprintf(stderr, "Out of memory!!\n");
+		fprintf(stderr, _("Out of memory!!\n"));
 		exit(1);
 	}
 
@@ -56,7 +60,7 @@ cs_parser_enlargeArgv(size_t newSize)
 	/* argv_ */
 	new_argv = (char**) malloc(sizeof(char*) * newSize);
 	if (!new_argv) {
-		fprintf(stderr, "Out of memory!!\n");
+		fprintf(stderr, _("Out of memory!!\n"));
 		exit(1);
 	}
 
@@ -73,7 +77,7 @@ cs_parser_init()
 {
 	rawArgv_ = (char**) malloc(sizeof(char*) * argvLen_);
 	if (!rawArgv_) {
-		fprintf(stderr, "Out of memory!!\n");
+		fprintf(stderr, _("Out of memory!!\n"));
 		return -1;
 	}
 
@@ -83,7 +87,7 @@ cs_parser_init()
 
 	argv_ = (char**) malloc(sizeof(char*) * argvLen_);
 	if (!argv_) {
-		fprintf(stderr, "Out of memory!!\n");
+		fprintf(stderr, _("Out of memory!!\n"));
 		return -1;
 	}
 

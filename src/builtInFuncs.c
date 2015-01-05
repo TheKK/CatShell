@@ -23,6 +23,8 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+#include <libintl.h>
+#include <locale.h>
 #include <dirent.h>
 #include <time.h>
 #include <sys/stat.h>
@@ -31,6 +33,8 @@
 #include "pipe.h"
 #include "history.h"
 #include "programState.h"
+
+#define _(STRING) gettext(STRING)
 
 #define BUILTIN(cmd) {#cmd, cmd}
 #define BUILTIN_WITH_NAME(cmdName, cmdFunc) {#cmdName, cmdFunc}
@@ -138,7 +142,8 @@ cd(int argc, const char* argv[])
 		fullPath[strlen(fullPath) - 1] = '\0';
 
 	if (cs_path_changeWorkingPath(fullPath)) {
-		fprintf(stderr, "no such file or directory: %s\n", cdTo);
+		fprintf(stderr,
+			_("no such file or directory: %s\n"), cdTo);
 		return 1;
 	}
 
@@ -157,7 +162,7 @@ bltMkdir(int argc, const char* argv[])
 	size_t fullPathLen;
 
 	if (argc == 1) {
-		fprintf(stderr, "%s: missing operand\n", argv[0]);
+		fprintf(stderr, _("%s: missing operand\n"), argv[0]);
 		return 1;
 	}
 
@@ -172,9 +177,9 @@ bltMkdir(int argc, const char* argv[])
 		strcat(fullPath, dirPath);
 
 		if (cs_path_mkdir(fullPath))
-			fprintf(stderr, "%s: can not create directory '%s': "
-				"File exist\n",
-			       argv[0], argv[i]);
+			fprintf(stderr, _("%s: can not create directory '%s': "
+					  "File exist\n"),
+				argv[0], argv[i]);
 	}
 
 	return 0;
@@ -192,7 +197,7 @@ cat(int argc, const char* argv[])
 	size_t strLen;
 
 	if (argc == 1) {
-		fprintf(stderr, "%s: missing operand\n", argv[0]);
+		fprintf(stderr, _("%s: missing operand\n"), argv[0]);
 		return 1;
 	}
 
@@ -213,8 +218,9 @@ cat(int argc, const char* argv[])
 
 		fd = fopen(fullPath, "rb");
 		if (!fd) {
-			fprintf(stderr, "%s: %s: No such file or directory\n",
-			       argv[0], filePath);
+			fprintf(stderr,
+				_("%s: %s: No such file or directory\n"),
+				argv[0], filePath);
 			continue;
 		}
 
@@ -243,7 +249,7 @@ bltTime(int argc, const char* argv[])
 	const char** newArgv;
 
 	if (argc == 1) {
-		fprintf(stderr, "%s: missing operand\n", argv[0]);
+		fprintf(stderr, _("%s: missing operand\n"), argv[0]);
 		return 1;
 	}
 
@@ -256,9 +262,9 @@ bltTime(int argc, const char* argv[])
 	stopTime = time(NULL);
 
 	fprintf(cs_pipe_getOutputStream(),
-		"Start clock: %li, stop clock: %li\n", startTime, stopTime);
+		_("Start clock: %li, stop clock: %li\n"), startTime, stopTime);
 	fprintf(cs_pipe_getOutputStream(),
-		"%f user\n",
+		_("%f user\n"),
 		(float) (stopTime - startTime) / (float) CLOCKS_PER_SEC);
 
 	return 0;
@@ -297,7 +303,7 @@ ls(int argc, const char* argv[])
 	dirp = opendir(fullPath);
 	if (!dirp) {
 		fprintf(stderr,
-			"%s: cannot access %s: No such file or directory\n",
+			_("%s: cannot access %s: No such file or directory\n"),
 			argv[0], targetPath);
 		return 2;
 	}
@@ -329,7 +335,7 @@ du(int argc, const char* argv[])
 	struct stat st;
 
 	if (argc == 1) {
-		fprintf(stderr, "%s: missing operand\n", argv[0]);
+		fprintf(stderr, _("%s: missing operand\n"), argv[0]);
 		return 1;
 	}
 
@@ -352,14 +358,14 @@ du(int argc, const char* argv[])
 			free(fullPath);
 		fullPath = NULL;
 
-		fprintf(stderr, "%s: file or directory not exist: %s\n",
+		fprintf(stderr, _("%s: file or directory not exist: %s\n"),
 		       argv[0], targetPath);
 
 		return 1;
 	}
 
 	fprintf(cs_pipe_getOutputStream(),
-		"%fK\t%s\n", ((float)st.st_size / 1024.0), targetPath);
+		_("%fK\t%s\n"), ((float)st.st_size / 1024.0), targetPath);
 
 	if (fullPath != targetPath)
 		free(fullPath);
@@ -382,7 +388,7 @@ ps(int argc, const char* argv[])
 
 	dirp = opendir("/proc");
 	if (!dirp) {
-		fprintf(cs_pipe_getOutputStream(), "sorry, but Linux only\n");
+		fprintf(stderr, _("sorry, but Linux only\n"));
 
 		return 1;
 	}
@@ -403,7 +409,7 @@ ps(int argc, const char* argv[])
 				fd = fopen(fullPath, "rb");
 				if (!fd) {
 					fprintf(stderr,
-						"this should not happend\n");
+						_("this should not happend\n"));
 					exit (1);
 				}
 
@@ -459,7 +465,7 @@ help(int argc, const char* argv[])
 	/* FIXME same code */
 	static int  builtinCmdNum = sizeof(builtins) / sizeof(struct builtin);
 
-	fprintf(cs_pipe_getOutputStream(), "Avaliable builtin command:\n");
+	fprintf(cs_pipe_getOutputStream(), _("Avaliable builtin command:\n"));
 	for (int i = 0; i < builtinCmdNum; i++)
 		fprintf(cs_pipe_getOutputStream(), "%s\n", builtins[i].name);
 
@@ -477,7 +483,7 @@ bye(int argc, const char* argv[])
 static int
 hell(int argc, const char* argv[])
 {
-	fprintf(cs_pipe_getOutputStream(), "this is hell!!\n");
+	fprintf(cs_pipe_getOutputStream(), _("this is hell!!\n"));
 
 	return 0;
 }

@@ -24,10 +24,14 @@
 #include <unistd.h>
 #include <termios.h>
 #include <string.h>
+#include <libintl.h>
+#include <locale.h>
 
 #include "path.h"
 #include "history.h"
 #include "color.h"
+
+#define _(STRING) gettext(STRING)
 
 static char* cmdLineBuf = NULL;
 static size_t cmdLineBufLen = 10;
@@ -58,7 +62,7 @@ cs_cmdline_enlargeCmdLineBuf(size_t newSize)
 
 	cmdLineBuf = (char*) realloc(cmdLineBuf, newSize);
 	if (!cmdLineBuf) {
-		fprintf(stderr, "Out of memory\n");
+		fprintf(stderr, _("Out of memory\n"));
 		exit(1);
 	}
 

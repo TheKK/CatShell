@@ -31,8 +31,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <libintl.h>
+#include <locale.h>
 
 #include "sysfilesystem.h"
+
+#define _(STRING) gettext(STRING)
 
 char*
 cs_readSymLink(const char* path)
@@ -44,7 +48,7 @@ cs_readSymLink(const char* path)
 	while (1) {
 		char* ptr = (char*) realloc(retval, len);
 		if (!ptr) {
-			printf("Out of memory\n");
+			fprintf(stderr, _("Out of memory\n"));
 			break;
 		}
 
