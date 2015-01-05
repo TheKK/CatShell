@@ -17,6 +17,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
+#include "builtInFuncs.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -28,14 +30,10 @@
 #include "path.h"
 #include "pipe.h"
 #include "history.h"
-
-#include "builtInFuncs.h"
+#include "programState.h"
 
 #define BUILTIN(cmd) {#cmd, cmd}
 #define BUILTIN_WITH_NAME(cmdName, cmdFunc) {#cmdName, cmdFunc}
-
-/* XXX This might not a good idea */
-extern uint8_t shellIsRunning_;
 
 static int echo(int argc, const char* argv[]);
 static int date(int argc, const char* argv[]);
@@ -52,7 +50,6 @@ static int help(int argc, const char* argv[]);
 
 static int bye(int argc, const char* argv[]);
 static int hell(int argc, const char* argv[]);
-
 
 typedef int(*builtinFuncPtr)(int, const char**);
 
@@ -472,7 +469,7 @@ help(int argc, const char* argv[])
 static int
 bye(int argc, const char* argv[])
 {
-	shellIsRunning_ = 0;
+	cs_programState_shellIsRunning = 0;
 
 	return 0;
 }

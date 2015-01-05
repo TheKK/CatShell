@@ -38,14 +38,9 @@
 #include "parser.h"
 #include "cmdline.h"
 #include "history.h"
+#include "programState.h"
 
 #define _(STRING) gettext(STRING)
-
-#define USER_INPUT_BUFFER_SIZE 200
-#define MY_ARGC_MAX_COUNT 50
-
-/* TODO move this to other file */
-uint8_t shellIsRunning_ = 1;
 
 static void
 showVersion()
@@ -161,7 +156,7 @@ main(int argc, char* argv[])
 
 	getOptions(argc, argv);
 
-	if (argc > 1) {
+	if (argc > 1) { /* Script mode */
 		FILE* fd = NULL;
 		char* lineBuf = NULL;
 		size_t lineLen = 0;
@@ -199,9 +194,8 @@ main(int argc, char* argv[])
 		fclose(fd);
 		fd = NULL;
 
-	} else if (argc == 1) {
-
-		while (shellIsRunning_) {
+	} else if (argc == 1) { /* Interactive mode */
+		while (cs_programState_shellIsRunning) {
 			cs_cmdline_handleUserInput();
 
 			cs_parser_parse(cs_cmdline_getCmdBuf());
