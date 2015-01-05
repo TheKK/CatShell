@@ -45,6 +45,21 @@
 static void
 showVersion()
 {
+	printf("+      o     +              o   \n");
+	printf("    +             o     +       +\n");
+	printf("o          +\n");
+	printf("    o  +           +        +\n");
+	printf("+        o     o       +        o\n");
+	printf("-_-_-_-_-_-_-_,------,      o \n");
+	printf("_-_-_-_-_-_-_-|   /\\_/\\  \n");
+	printf("-_-_-_-_-_-_-~|__( ^ .^)  +     +  \n");
+	printf("_-_-_-_-_-_-_-\"\"   \"\"      \n");
+	printf("+      o         o   +       o\n");
+	printf("    +         +\n");
+	printf("o        o         o      o     +\n");
+	printf("    o           +\n");
+	printf("+      +     o        o      +    \n");
+
 	printf(_("CatShell (OS homework) 0.25\n"));
 }
 
