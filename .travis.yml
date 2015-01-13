@@ -1,4 +1,7 @@
 language: c
+os:
+        - linux
+        - osx
 compiler:
         - gcc
         - clang
@@ -14,7 +17,6 @@ install:
         - sudo make install
 
 before_script:
-        #- export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:./cmocka-0.4.1/build/src
         - sudo ldconfig
         - cd ../..
 

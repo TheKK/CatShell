@@ -24,7 +24,7 @@ CXXFLAG = -Wall -std=gnu99 -g
 OUT_DIR = obj
 SRC_DIR = src
 INC_DIR = include
-TEST_DIR = test
+TEST_DIR = tests
 
 # Source files and header files
 SRC = $(wildcard $(addsuffix /*.c, $(SRC_DIR)))
@@ -46,9 +46,9 @@ OUT_EXE = cs
 all: $(OUT_EXE)
 	@echo "===========[[Everything done!!]]============"
 
-dotest: $(TESTS)
+test: $(TESTS)
 	@echo "===========[[Start test]]============"
-	@$(foreach test, $^, echo [$(notdir $(test))] && ./$(test) && echo;)
+	@$(foreach test, $^, echo [$(notdir $(test))] && ./$(test) && echo)
 	@echo "===========[[Test all done]]============"
 
 $(OUT_EXE): $(OBJ) $(MAIN_OBJ)
@@ -57,7 +57,7 @@ $(OUT_EXE): $(OBJ) $(MAIN_OBJ)
 
 $(OUT_DIR)/$(TEST_DIR)/%: $(OBJ) $(OUT_DIR)/$(TEST_DIR)/%.o
 	@echo "    LD    " $(notdir $@)
-	@$(CXX) $^ $(CXXFLAG) $(INCLUDE) $(LIB) -lcmocka -o $@
+	@$(CXX) $^ $(CXXFLAG) $(LIB) -lcmocka -o $@
 
 $(OUT_DIR)/%.o: %.c
 	@echo "    CC    " $(notdir $@)
@@ -66,7 +66,7 @@ $(OUT_DIR)/%.o: %.c
 
 .PHONY: clean pot
 clean:
-	@rm -frv $(OUT_DIR)/*
+	@rm -frv $(OUT_DIR)
 	@echo "===========[[Everything removed!!]]============"
 
 pot:
