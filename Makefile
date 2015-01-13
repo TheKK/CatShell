@@ -48,7 +48,7 @@ all: $(OUT_EXE)
 
 dotest: $(TESTS)
 	@echo "===========[[Start test]]============"
-	@$(foreach test, $^, echo [$(notdir $(test))]; ./$(test); echo;)
+	@$(foreach test, $^, echo [$(notdir $(test))] && ./$(test) && echo;)
 	@echo "===========[[Test all done]]============"
 
 $(OUT_EXE): $(OBJ) $(MAIN_OBJ)
