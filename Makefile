@@ -24,7 +24,7 @@ CXXFLAG = -Wall -std=gnu99 -g
 OUT_DIR = obj
 SRC_DIR = src
 INC_DIR = include
-TEST_DIR = tests
+TEST_DIR = test
 
 # Source files and header files
 SRC = $(wildcard $(addsuffix /*.c, $(SRC_DIR)))
