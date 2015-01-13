@@ -39,7 +39,7 @@ TEST_OBJ = $(addprefix $(OUT_DIR)/, $(TEST_SRC:.c=.o))
 TESTS = $(addprefix $(OUT_DIR)/, $(TEST_SRC:.c=))
 
 # Libs flags
-LIB = -lpthread -lcmocka
+LIB = -lpthread
 
 OUT_EXE = cs
 
@@ -57,7 +57,7 @@ $(OUT_EXE): $(OBJ) $(MAIN_OBJ)
 
 $(OUT_DIR)/$(TEST_DIR)/%: $(OBJ) $(OUT_DIR)/$(TEST_DIR)/%.o
 	@echo "    LD    " $(notdir $@)
-	@$(CXX) $^ $(CXXFLAG) $(INCLUDE) $(LIB) -o $@
+	@$(CXX) $^ $(CXXFLAG) $(INCLUDE) $(LIB) -lcmocka -o $@
 
 $(OUT_DIR)/%.o: %.c
 	@echo "    CC    " $(notdir $@)
