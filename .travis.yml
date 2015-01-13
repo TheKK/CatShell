@@ -4,10 +4,10 @@ compiler:
         - clang
 
 before_install:
-        - sudo apt-get update
+        - sudo apt-get -qq update
 install:
-        - sudo apt-get install libcmocka0 libcmocka-dev
+        - sudo apt-get -qq install libcmocka-dev
 
 script:
         - make all
-        #- make dotest
+        - make dotest
