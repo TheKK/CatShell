@@ -3,15 +3,18 @@ compiler:
         - gcc
         - clang
 
-before_install:
+before_install: true
+
+install:
         - wget https://open.cryptomilk.org/attachments/download/42/cmocka-0.4.1.tar.xz
         - tar -xvf cmocka-0.4.1.tar.xz
         - cd cmocka-0.4.1
         - mkdir build && cd build
         - cmake ../ &&  make
         - sudo make install
-#install:
-        #- sudo apt-get  install cmocka
+
+before_script:
+        - cd ../..
 
 script:
         - make all
