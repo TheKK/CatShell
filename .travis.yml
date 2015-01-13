@@ -4,9 +4,9 @@ compiler:
         - clang
 
 before_install:
-        - sudo apt-get -qq update
+        - sudo apt-get  update
 install:
-        - sudo apt-get -qq install libcmocka-dev
+        - sudo apt-get  install cmocka
 
 script:
         - make all
