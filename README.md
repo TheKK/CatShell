@@ -1,4 +1,4 @@
-# CatShell
+# CatShell  [![Build Status](https://travis-ci.org/TheKK/CatShell.svg?branch=dev)](https://travis-ci.org/TheKK/CatShell)
 *Copyright (C) 2014 TheKK*
 
 > THIS PROGRAM IS DISTRIBUTED WITHOUT ANY WARRANTY<br/>
