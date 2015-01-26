@@ -23,6 +23,5 @@ before_script:
         - sudo ldconfig
 
 script:
-        - $CXX --version
         - make all
         - make test
