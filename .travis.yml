@@ -14,7 +14,9 @@ notifications:
 before_install:
 
 install:
-        - sudo apt-get install libgtest-dev libgtest
+        - sudo apt-get update
+        - sudo apt-get install libgtest-dev
+        - "cd /usr/src/gtest && sudo cmake . && sudo cmake --build . && sudo mv libg* /usr/local/lib/ ; cd -"
 
 before_script:
         - sudo ldconfig
