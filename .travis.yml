@@ -12,18 +12,12 @@ notifications:
                 on_failure: always
 
 before_install:
-        - wget https://open.cryptomilk.org/attachments/download/42/cmocka-0.4.1.tar.xz
-        - tar -xvf cmocka-0.4.1.tar.xz
-        - cd cmocka-0.4.1
-        - mkdir build && cd build
-        - cmake ../ &&  make
 
 install:
-        - sudo make install
+        - sudo apt-get install libgtest-dev
 
 before_script:
         - sudo ldconfig
-        - cd ../..
 
 script:
         - make all

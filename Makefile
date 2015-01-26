@@ -17,58 +17,53 @@
  # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  #
 
-CXX = gcc
-CXXFLAG = -Wall -std=gnu99 -g
+CC = gcc
+CC_FLAGS = -Wall -std=gnu99 -g
 
-# Direcotries
-OUT_DIR = obj
-SRC_DIR = src
-INC_DIR = include
-TEST_DIR = test
-
-# Source files and header files
-SRC = $(wildcard $(addsuffix /*.c, $(SRC_DIR)))
-INCLUDE = $(addprefix -I, $(INC_DIR))
-OBJ := $(addprefix $(OUT_DIR)/, $(SRC:.c=.o))
-OBJ := $(filter-out $(OUT_DIR)/$(SRC_DIR)/main.o, $(OBJ))
-
-MAIN_OBJ = $(OUT_DIR)/$(SRC_DIR)/main.o
-
-TEST_SRC = $(wildcard $(addsuffix /*.c, $(TEST_DIR)))
-TEST_OBJ = $(addprefix $(OUT_DIR)/, $(TEST_SRC:.c=.o))
-TESTS = $(addprefix $(OUT_DIR)/, $(TEST_SRC:.c=))
+CXX = g++
+CXX_FLAGS = -Wall -std=c++14 -g
 
 # Libs flags
-LIB = -lpthread
+LIBS = -lpthread -lgtest
+
+# Direcotries
+BUILD_DIR = build
+SRC_DIR = src
+INC_DIR = include
+MK_DIR = mk
+
+# Source files and header files
+SRCS = $(wildcard $(addsuffix /*.c, $(SRC_DIR)))
+INCLUDES = $(addprefix -I, $(INC_DIR))
+OBJS = $(addprefix $(BUILD_DIR)/, $(SRCS:.c=.o))
+MKS = $(wildcard $(MK_DIR)/*.mk)
 
 OUT_EXE = cs
 
 all: $(OUT_EXE)
 	@echo "===========[[Everything done!!]]============"
 
-test: $(TESTS)
-	@echo "===========[[Start test]]============"
-	@$(foreach test, $^, echo "[$(notdir $(test))]" && ./$(test) && echo "")
-	@echo "===========[[Test all done]]============"
+include $(MKS)
 
-$(OUT_EXE): $(OBJ) $(MAIN_OBJ)
+$(OUT_EXE): $(OBJS)
 	@echo "    LD    " $(notdir $@)
-	@$(CXX) $^ $(CXXFLAG) $(LIB) -o $@
+	@$(CC) $^ $(CC_FLAGS) $(LIBS) -o $@
 
-$(OUT_DIR)/$(TEST_DIR)/%: $(OBJ) $(OUT_DIR)/$(TEST_DIR)/%.o
-	@echo "    LD    " $(notdir $@)
-	@$(CXX) $^ $(CXXFLAG) $(LIB) -lcmocka -o $@
-
-$(OUT_DIR)/%.o: %.c
+$(BUILD_DIR)/%.o: %.c
 	@echo "    CC    " $(notdir $@)
 	@mkdir -p $(dir $@)
-	@$(CXX) -c $< $(CXXFLAG) $(INCLUDE) -o $@
+	@$(CC) -c $< $(CC_FLAGS) $(INCLUDES) -o $@
+
+$(BUILD_DIR)/%.o: %.cpp
+	@echo "    CXX   " $(notdir $@)
+	@mkdir -p $(dir $@)
+	@$(CXX) -c $< $(CXX_FLAGS) $(INCLUDES) -o $@
 
 .PHONY: clean pot
 clean:
-	@rm -frv $(OUT_DIR)
+	@rm -frv $(BUILD_DIR)
 	@echo "===========[[Everything removed!!]]============"
 
 pot:
-	@xgettext $(SRC) -k_ -o ./pot/CatShell.pot
+	@xgettext $(SRCS) -k_ -o ./pot/CatShell.pot
 	@echo "===========[[POT file created!!]]============"
