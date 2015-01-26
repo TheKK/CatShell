@@ -21,7 +21,7 @@ CC = gcc
 CC_FLAGS = -Wall -std=gnu99 -g
 
 CXX = g++
-CXX_FLAGS = -Wall -std=c++11 -g
+CXX_FLAGS = -Wall -g
 
 # Libs flags
 LIBS = -lpthread -lgtest

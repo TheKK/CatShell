@@ -52,7 +52,7 @@ TEST_F (PathTest, getWorkingPath)
 		cwd = (char*) realloc(cwd, sizeof(char) * len);
 	}
 
-	ASSERT_TRUE(cs_path_getWorkingPath() != nullptr);
+	ASSERT_TRUE(cs_path_getWorkingPath() != NULL);
 	ASSERT_STREQ(cs_path_getWorkingPath(), cwd);
 
 	free(cwd);
@@ -70,7 +70,7 @@ TEST_F (PathTest, changeWorkingPath)
 TEST_F (PathTest, mkdir)
 {
 	const char newDirName[] = "/tmp/kyoka";
-	DIR* dirp = nullptr;
+	DIR* dirp = NULL;
 
 	/* If directory exist, remove it */
 	dirp = opendir(newDirName);
@@ -82,7 +82,7 @@ TEST_F (PathTest, mkdir)
 	ASSERT_EQ(cs_path_mkdir(newDirName), 0);
 
 	dirp = opendir(newDirName);
-	ASSERT_TRUE(dirp != nullptr);
+	ASSERT_TRUE(dirp != NULL);
 	closedir(dirp);
 
 	ASSERT_EQ(rmdir(newDirName), 0);
